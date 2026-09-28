@@ -1,26 +1,103 @@
-@import "tailwindcss";
+/* src/app/globals.css */
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ── Minimal reset ── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html,
+body {
+  margin: 0;
+  padding: 0;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans, system-ui, -apple-system, sans-serif);
+  color: var(--color-text-primary, #111827);
+  background: var(--color-background-base, #ffffff);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-wrap: break-word;
+}
+
+/* ── Section density ── */
+@media (min-width: 768px) {
+  .wm-section[data-density="sm"] {
+    padding-top: var(--space-12);
+    padding-bottom: var(--space-12);
+  }
+  .wm-section[data-density="md"] {
+    padding-top: var(--space-20);
+    padding-bottom: var(--space-20);
+  }
+  .wm-section[data-density="lg"] {
+    padding-top: var(--space-32);
+    padding-bottom: var(--space-32);
+  }
+}
+
+/* ── Hero: centered ── */
+.wm-hero-centered {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-12) 0;
+}
+
+@media (min-width: 768px) {
+  .wm-hero-centered {
+    min-height: 60vh;
+    padding: 0;
+  }
+}
+
+/* ── Hero: background image ── */
+.wm-hero-bg {
+  display: grid;
+  place-items: center;
+  padding: var(--space-16) 0;
+}
+
+@media (min-width: 768px) {
+  .wm-hero-bg {
+    min-height: 80vh;
+    padding: 0;
+  }
+}
+
+/* ── Hero: CTA button group — stacks on mobile ── */
+.wm-hero-cta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  width: 100%;
+  max-width: 320px;
+}
+
+@media (min-width: 640px) {
+  .wm-hero-cta {
+    flex-direction: row;
+    justify-content: center;
+    width: auto;
+    max-width: none;
+  }
+  .wm-hero-cta > * {
+    width: auto !important;
+  }
+}
+
+/* ── Gallery masonry — responsive columns ── */
+@media (min-width: 768px) {
+  .wm-masonry {
+    column-count: 3 !important;
+  }
+}
+@media (min-width: 1024px) {
+  .wm-masonry {
+    column-count: 4 !important;
+  }
 }
