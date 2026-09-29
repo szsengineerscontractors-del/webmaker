@@ -39,13 +39,30 @@ export const resolveStyle = (styleKey) =>
   STYLE_VARIANTS[styleKey] ?? STYLE_VARIANTS.default;
 
 /**
- * Section metadata — used by the picker UI and schema validators.
+ * Build a section's meta block.
+ * Every section calls this once with its own data.
  */
-export const sectionMeta = (id, name, category, layoutVariants, styleVariants) => ({
+export const sectionMeta = ({
   id,
   name,
   category,
-  layoutVariants,
-  styleVariants,
-  version: '1.0.0',
+  version = '1.0.0',
+  defaultLayout,
+  layouts,
+  defaultStyle = 'default',
+  styles = [
+    { id: 'default', label: 'Default' },
+    { id: 'muted',   label: 'Muted' },
+    { id: 'dark',    label: 'Dark' },
+    { id: 'brand',   label: 'Brand' },
+  ],
+}) => ({
+  id,
+  name,
+  category,
+  version,
+  defaultLayout,
+  layouts,
+  defaultStyle,
+  styles,
 });

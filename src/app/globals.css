@@ -1,5 +1,5 @@
 /* src/app/globals.css */
-
+@import "../wizard/wizard.css";
 /* ── Minimal reset ── */
 *,
 *::before,
@@ -100,4 +100,83 @@ body {
   .wm-masonry {
     column-count: 4 !important;
   }
+}
+
+
+/* ═══════════════════════════════════════════
+   ANCHOR SCROLLING
+   ═══════════════════════════════════════════ */
+
+html {
+  scroll-behavior: smooth;
+}
+
+section[id] {
+  scroll-margin-top: 80px;
+}
+
+/* ═══════════════════════════════════════════
+   NAVBAR — responsive
+   ═══════════════════════════════════════════ */
+
+.wm-nav-links {
+  display: none;
+}
+
+.wm-nav-mobile-trigger {
+  display: inline-flex;
+}
+
+@media (min-width: 768px) {
+  .wm-nav-links {
+    display: flex !important;
+  }
+  .wm-nav-mobile-trigger {
+    display: none !important;
+  }
+}
+
+/* ═══════════════════════════════════════════
+   NAVBAR
+   ═══════════════════════════════════════════ */
+
+.wm-nav-links {
+  display: none;
+  gap: var(--space-6);
+  align-items: center;
+  justify-content: center;
+}
+
+.wm-nav-mobile-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  font-size: 20px;
+  line-height: 1;
+}
+
+@media (min-width: 768px) {
+  .wm-nav-links {
+    display: flex !important;
+  }
+  .wm-nav-mobile-trigger {
+    display: none !important;
+  }
+}
+
+/* Drawer */
+.wm-nav-drawer {
+  position: fixed;
+  inset: 0;
+  top: 72px;
+  z-index: 1400;               /* just above sticky nav */
+  padding: var(--space-6);
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }

@@ -6,13 +6,17 @@ import { Heading, Text, Button, Input } from '../components';
 import { resolveStyle, sectionMeta } from './_shared';
 import { color, space } from '../components/tokens';
 
-export const meta = sectionMeta(
-  'contact',
-  'Contact',
-  'contact',
-  ['split', 'centered', 'info-only'],
-  ['default', 'muted', 'dark', 'brand']
-);
+export const meta = sectionMeta({
+  id: 'contact',
+  name: 'Contact',
+  category: 'contact',
+  defaultLayout: 'split',
+  layouts: [
+    { id: 'split',     label: 'Split',     description: 'Info on left, form on right' },
+    { id: 'centered',  label: 'Centered',  description: 'Everything centered, form below' },
+    { id: 'info-only', label: 'Info only', description: 'Address and hours, no form' },
+  ],
+});
 
 export default function Contact({
   layout = 'split',
@@ -20,25 +24,12 @@ export default function Contact({
   content = {},
 }) {
   const s = resolveStyle(styleKey);
-  const {
-    eyebrow,
-    heading,
-    subheading,
-    form = {},
-    info = [],
-    map,
-  } = content;
+  const { eyebrow, heading, subheading, form = {}, info = [], map } = content;
 
   const header = (heading || subheading) && (
     <Stack gap={3} style={{ maxWidth: '560px' }}>
       {eyebrow && (
-        <span style={{
-          fontSize: '12px',
-          fontWeight: 600,
-          letterSpacing: '0.05em',
-          textTransform: 'uppercase',
-          color: styleKey === 'brand' ? s.textPrimary : color.brandPrimary,
-        }}>
+        <span style={{ fontSize: '12px', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', color: styleKey === 'brand' ? s.textPrimary : color.brandPrimary }}>
           {eyebrow}
         </span>
       )}
@@ -84,12 +75,7 @@ export default function Contact({
               overflow: 'hidden',
             }}>
               {typeof map === 'string' ? (
-                <iframe
-                  src={map}
-                  title="Map"
-                  style={{ width: '100%', height: '100%', border: 0 }}
-                  loading="lazy"
-                />
+                <iframe src={map} title="Map" style={{ width: '100%', height: '100%', border: 0 }} loading="lazy" />
               ) : null}
             </div>
           )}
@@ -101,24 +87,14 @@ export default function Contact({
 
 function ContactInfo({ items, s, centered = false }) {
   if (!items || items.length === 0) return null;
-
   return (
     <Stack gap={4} style={centered ? { alignItems: 'center' } : undefined}>
       {items.map((item, i) => (
         <Stack key={i} gap={1} style={centered ? { alignItems: 'center' } : undefined}>
-          <span style={{
-            fontSize: 'var(--text-xs)',
-            fontWeight: 600,
-            letterSpacing: '0.05em',
-            textTransform: 'uppercase',
-            color: s.textMuted,
-          }}>
+          <span style={{ fontSize: 'var(--text-xs)', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', color: s.textMuted }}>
             {item.label}
           </span>
-          <span style={{
-            fontSize: 'var(--text-base)',
-            color: s.textPrimary,
-          }}>
+          <span style={{ fontSize: 'var(--text-base)', color: s.textPrimary }}>
             {item.value}
           </span>
         </Stack>
@@ -128,18 +104,12 @@ function ContactInfo({ items, s, centered = false }) {
 }
 
 function ContactForm({ form, s }) {
-  const [fields, setFields] = useState({
-    name: '',
-    email: '',
-    message: '',
-  });
+  const [fields, setFields] = useState({ name: '', email: '', message: '' });
   const [submitted, setSubmitted] = useState(false);
-
   const { nameLabel = 'Name', emailLabel = 'Email', messageLabel = 'Message', submitLabel = 'Send message' } = form;
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // TODO: wire up to your backend / form handler
     setSubmitted(true);
   };
 

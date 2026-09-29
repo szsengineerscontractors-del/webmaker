@@ -4,13 +4,17 @@ import { Heading, Text, Card, Avatar } from '../components';
 import { resolveStyle, sectionMeta } from './_shared';
 import { color, space } from '../components/tokens';
 
-export const meta = sectionMeta(
-  'testimonials',
-  'Testimonials',
-  'testimonials',
-  ['3up', '2up', 'wall'],
-  ['default', 'muted', 'dark', 'brand']
-);
+export const meta = sectionMeta({
+  id: 'testimonials',
+  name: 'Testimonials',
+  category: 'testimonials',
+  defaultLayout: '3up',
+  layouts: [
+    { id: '3up',  label: 'Three columns', description: '3 cards side by side' },
+    { id: '2up',  label: 'Two columns',   description: '2 larger cards' },
+    { id: 'wall', label: 'Wall',          description: 'Dense grid of many short reviews' },
+  ],
+});
 
 export default function Testimonials({
   layout = '3up',
@@ -20,19 +24,18 @@ export default function Testimonials({
   const s = resolveStyle(styleKey);
   const { eyebrow, heading, subheading, items = [] } = content;
 
+  const cols =
+    layout === '2up'  ? { base: 1, md: 2 } :
+    layout === 'wall' ? { base: 1, md: 2, lg: 3 } :
+                        { base: 1, md: 3 };
+
   return (
     <Container width="wide">
       <Stack gap={10}>
         {(heading || subheading) && (
           <Stack gap={3} align="center" style={{ textAlign: 'center', maxWidth: '640px', margin: '0 auto' }}>
             {eyebrow && (
-              <span style={{
-                fontSize: '12px',
-                fontWeight: 600,
-                letterSpacing: '0.05em',
-                textTransform: 'uppercase',
-                color: styleKey === 'brand' ? s.textPrimary : color.brandPrimary,
-              }}>
+              <span style={{ fontSize: '12px', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', color: styleKey === 'brand' ? s.textPrimary : color.brandPrimary }}>
                 {eyebrow}
               </span>
             )}
@@ -41,21 +44,13 @@ export default function Testimonials({
           </Stack>
         )}
 
-        {layout === '3up' && <TestimonialsGrid s={s} items={items} cols={{ base: 1, md: 3 }} />}
-        {layout === '2up' && <TestimonialsGrid s={s} items={items} cols={{ base: 1, md: 2 }} />}
-        {layout === 'wall' && <TestimonialsGrid s={s} items={items} cols={{ base: 1, md: 2, lg: 3 }} compact />}
+        <Grid columns={cols} gap={6}>
+          {items.map((item, i) => (
+            <TestimonialCard key={i} item={item} s={s} compact={layout === 'wall'} />
+          ))}
+        </Grid>
       </Stack>
     </Container>
-  );
-}
-
-function TestimonialsGrid({ s, items, cols, compact = false }) {
-  return (
-    <Grid columns={cols} gap={6}>
-      {items.map((item, i) => (
-        <TestimonialCard key={i} item={item} s={s} compact={compact} />
-      ))}
-    </Grid>
   );
 }
 
@@ -86,11 +81,7 @@ function TestimonialCard({ item, s, compact }) {
 
       {(name || role) && (
         <div style={{ display: 'flex', alignItems: 'center', gap: space(3) }}>
-          {avatar ? (
-            <Avatar src={avatar} name={name} size="sm" />
-          ) : (
-            <Avatar name={name} size="sm" />
-          )}
+          <Avatar src={avatar} name={name} size="sm" />
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             {name && (
               <span style={{ fontSize: 'var(--text-sm)', fontWeight: 600, color: s.textPrimary }}>

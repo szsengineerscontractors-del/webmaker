@@ -2,7 +2,7 @@
 import { notFound } from 'next/navigation';
 import RenderTemplate from '@/renderer/RenderTemplate';
 import ThemeProvider from '@/theme/ThemeProvider';
-import { sites } from '@/lib/sites';
+import { sites } from '@/lib/sites';   // ← fixed import
 
 export default async function SitePage({ params }) {
   const { id } = await params;
@@ -15,4 +15,4 @@ export default async function SitePage({ params }) {
       <RenderTemplate template={site} />
     </ThemeProvider>
   );
-}
+} 

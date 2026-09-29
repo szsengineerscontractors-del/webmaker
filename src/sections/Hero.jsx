@@ -4,19 +4,25 @@ import { Button, Heading, Text, Badge, Image } from '../components';
 import { resolveStyle, sectionMeta } from './_shared';
 import { color, space } from '../components/tokens';
 
-export const meta = sectionMeta(
-  'hero',
-  'Hero',
-  'hero',
-  ['centered', 'split', 'split-reverse', 'bg-image'],
-  ['default', 'muted', 'dark', 'brand']
-);
+export const meta = sectionMeta({
+  id: 'hero',
+  name: 'Hero',
+  category: 'hero',
+  defaultLayout: 'centered',
+  layouts: [
+    { id: 'centered',      label: 'Centered',   description: 'Text centered' },
+    { id: 'split',         label: 'Text left',  description: 'Text left, image right' },
+    { id: 'split-reverse', label: 'Text right', description: 'Image left, text right' },
+    { id: 'bg-image',      label: 'Full image', description: 'Background image' },
+  ],
+});
 
 export default function Hero({
   layout = 'centered',
   style: styleKey = 'default',
   content = {},
 }) {
+  
   const s = resolveStyle(styleKey);
   const {
     eyebrow,
@@ -179,9 +185,4 @@ function HeroBgImage({ s, content }) {
       </Container>
     </div>
   );
-}
-
-// tiny helper used by HeroCentered for brand style contrast
-function styleKeyIsBrand(s) {
-  return s.background === color.brandPrimary;
 }

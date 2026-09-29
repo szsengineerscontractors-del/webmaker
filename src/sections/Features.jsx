@@ -1,16 +1,20 @@
-// sections/Features.jsx
+// src/sections/Features.jsx
 import { Container, Stack, Grid, Section, Split } from '../structures';
 import { Heading, Text, Card, Button } from '../components';
 import { resolveStyle, sectionMeta } from './_shared';
 import { color, space } from '../components/tokens';
 
-export const meta = sectionMeta(
-  'features',
-  'Features',
-  'features',
-  ['grid', 'alternating', 'bento'],
-  ['default', 'muted', 'dark', 'brand']
-);
+export const meta = sectionMeta({
+  id: 'features',
+  name: 'Features',
+  category: 'features',
+  defaultLayout: 'grid',
+  layouts: [
+    { id: 'grid',        label: 'Grid',        description: '3-column card grid' },
+    { id: 'alternating', label: 'Alternating', description: 'Large rows alternating text and image' },
+    { id: 'bento',       label: 'Bento',       description: 'Asymmetric grid with a featured card' },
+  ],
+});
 
 export default function Features({
   layout = 'grid',
@@ -26,7 +30,13 @@ export default function Features({
         {(heading || subheading) && (
           <Stack gap={3} align="center" style={{ textAlign: 'center', maxWidth: '640px', margin: '0 auto' }}>
             {eyebrow && (
-              <span style={{ fontSize: '12px', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', color: styleKey === 'brand' ? s.textPrimary : color.brandPrimary }}>
+              <span style={{
+                fontSize: '12px',
+                fontWeight: 600,
+                letterSpacing: '0.05em',
+                textTransform: 'uppercase',
+                color: styleKey === 'brand' ? s.textPrimary : color.brandPrimary,
+              }}>
                 {eyebrow}
               </span>
             )}

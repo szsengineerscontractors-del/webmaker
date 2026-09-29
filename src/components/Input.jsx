@@ -1,6 +1,7 @@
 // components/Input.jsx
-'use client'
+'use client';
 
+import { useId } from 'react';
 import { color, space, radius, text } from './tokens';
 
 export default function Input({
@@ -18,7 +19,8 @@ export default function Input({
   style = {},
   ...rest
 }) {
-  const inputId = id ?? `input-${Math.random().toString(36).slice(2, 8)}`;
+  const autoId = useId();
+  const inputId = id ?? `input-${autoId}`;
   const hasError = Boolean(error);
 
   const borderColor = hasError

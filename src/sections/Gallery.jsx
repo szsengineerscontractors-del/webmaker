@@ -4,13 +4,17 @@ import { Heading, Text, Image } from '../components';
 import { resolveStyle, sectionMeta } from './_shared';
 import { color } from '../components/tokens';
 
-export const meta = sectionMeta(
-  'gallery',
-  'Gallery',
-  'gallery',
-  ['grid', 'masonry', 'featured'],
-  ['default', 'muted', 'dark', 'brand']
-);
+export const meta = sectionMeta({
+  id: 'gallery',
+  name: 'Gallery',
+  category: 'gallery',
+  defaultLayout: 'grid',
+  layouts: [
+    { id: 'grid',     label: 'Grid',     description: 'Uniform grid' },
+    { id: 'masonry',  label: 'Masonry',  description: 'Pinterest-style columns' },
+    { id: 'featured', label: 'Featured', description: 'One large image with smaller ones below' },
+  ],
+});
 
 export default function Gallery({
   layout = 'grid',
@@ -61,10 +65,7 @@ function GalleryGrid({ images }) {
 
 function GalleryMasonry({ images }) {
   return (
-    <div style={{
-      columnCount: 2,
-      columnGap: '12px',
-    }}>
+    <div className="wm-masonry" style={{ columnCount: 2, columnGap: '12px' }}>
       {images.map((img, i) => (
         <div key={i} style={{ breakInside: 'avoid', marginBottom: '12px' }}>
           <GalleryItem image={img} aspect={i % 3 === 0 ? '3 / 4' : '1 / 1'} />
@@ -106,11 +107,7 @@ function GalleryItem({ image, aspect = '1 / 1' }) {
           style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
         />
       ) : (
-        <div style={{
-          width: '100%',
-          height: '100%',
-          background: 'var(--color-surface-2)',
-        }} />
+        <div style={{ width: '100%', height: '100%', background: 'var(--color-surface-2)' }} />
       )}
     </div>
   );

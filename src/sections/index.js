@@ -36,3 +36,31 @@ export const sectionRegistry = {
   team:         { component: Team,         meta: teamMeta },
   stats:        { component: Stats,        meta: statsMeta },
 };
+
+/* ─────────────────────────────────────────────────────────────
+   HELPERS — read from each section's meta
+   ───────────────────────────────────────────────────────────── */
+
+/** Get a section's default layout (used by the wizard). */
+export const getDefaultLayout = (type) => {
+  const entry = sectionRegistry[type];
+  return entry?.meta?.defaultLayout ?? 'default';
+};
+
+/** Get all layouts a section supports. */
+export const getLayouts = (type) => {
+  const entry = sectionRegistry[type];
+  return entry?.meta?.layouts ?? [];
+};
+
+/** Get a section's display name. */
+export const getSectionName = (type) => {
+  const entry = sectionRegistry[type];
+  return entry?.meta?.name ?? type;
+};
+
+/** Get a section's available styles. */
+export const getStyles = (type) => {
+  const entry = sectionRegistry[type];
+  return entry?.meta?.styles ?? [];
+};
