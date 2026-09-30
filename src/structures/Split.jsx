@@ -1,11 +1,11 @@
-// structures/Split.jsx
+// src/structures/Split.jsx
 import { sp, breakpoints } from './tokens';
 
 export default function Split({
-  ratio = '1fr 1fr',   // CSS grid-template-columns
+  ratio = '1fr 1fr',
   gap = 8,
-  collapseBelow = 'md', // stack below this breakpoint
-  reverse = false,      // swap order (main becomes second)
+  collapseBelow = 'md',
+  reverse = false,
   align = 'center',
   as: Tag = 'div',
   className = '',
@@ -13,7 +13,8 @@ export default function Split({
   children,
   ...rest
 }) {
-  const uid = 's' + Math.random().toString(36).slice(2, 8);
+  // Deterministic uid from props — same on server and client
+  const uid = `split-${ratio.replace(/\s/g, '')}-${reverse}-${collapseBelow}`;
   const min = breakpoints[collapseBelow];
 
   const colTemplate = reverse
@@ -29,7 +30,7 @@ export default function Split({
 
   return (
     <>
-      <style>{rules.join('\n')}</style>
+      <style suppressHydrationWarning>{rules.join('\n')}</style>
       <Tag
         data-split={uid}
         className={className}

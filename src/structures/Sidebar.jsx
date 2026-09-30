@@ -1,4 +1,4 @@
-// structures/Sidebar.jsx
+// src/structures/Sidebar.jsx
 import { sp, breakpoints } from './tokens';
 
 export default function Sidebar({
@@ -12,7 +12,8 @@ export default function Sidebar({
   children,
   ...rest
 }) {
-  const uid = 'sb' + Math.random().toString(36).slice(2, 8);
+  // Deterministic uid
+  const uid = `sidebar-${side}-${sideWidth.replace(/\s/g, '')}-${collapseBelow}`;
   const min = breakpoints[collapseBelow];
 
   const desktopTemplate = side === 'left'
@@ -28,7 +29,7 @@ export default function Sidebar({
 
   return (
     <>
-      <style>{rules.join('\n')}</style>
+      <style suppressHydrationWarning>{rules.join('\n')}</style>
       <Tag
         data-sidebar={uid}
         className={className}

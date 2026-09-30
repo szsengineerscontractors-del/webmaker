@@ -1,18 +1,21 @@
 // src/app/site/[id]/page.jsx
 import { notFound } from 'next/navigation';
-import RenderTemplate from '@/renderer/RenderTemplate';
+import connectDB from '@/lib/db';
+import Site from '@/models/Site';
 import ThemeProvider from '@/theme/ThemeProvider';
-import { sites } from '@/lib/sites';   // ← fixed import
+import RenderTemplate from '@/renderer/RenderTemplate';
 
 export default async function SitePage({ params }) {
   const { id } = await params;
-  const site = sites.get(id);
 
+  await connectDB();
+
+  const site = await Site.findById(id).lean();
   if (!site) notFound();
 
   return (
     <ThemeProvider themeName={site.theme}>
-      <RenderTemplate template={site} />
+      <RenderTemplate template={site.template} siteId={id} />
     </ThemeProvider>
   );
-} 
+}

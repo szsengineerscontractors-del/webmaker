@@ -27,7 +27,7 @@ export default function Footer({
   const { brand, columns = [], legal, social = [] } = content;
 
   return (
-    <footer style={{ background: s.background, color: s.textPrimary }}>
+    <footer className="wm-footer" style={{ background: s.background, color: s.textPrimary }}>
       <Container width="wide">
         <Stack gap={10}>
           {layout === 'multicol' ? (

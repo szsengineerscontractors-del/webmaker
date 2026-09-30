@@ -12,9 +12,9 @@ export const meta = sectionMeta({
   category: 'contact',
   defaultLayout: 'split',
   layouts: [
-    { id: 'split',     label: 'Split',     description: 'Info on left, form on right' },
-    { id: 'centered',  label: 'Centered',  description: 'Everything centered, form below' },
-    { id: 'info-only', label: 'Info only', description: 'Address and hours, no form' },
+    { id: 'split',     label: 'Split',      description: 'Info on left, form on right' },
+    { id: 'centered',  label: 'Centered',   description: 'Everything centered, form below' },
+    { id: 'info-only', label: 'Info only',  description: 'Address and hours, no form' },
   ],
 });
 
@@ -22,6 +22,7 @@ export default function Contact({
   layout = 'split',
   style: styleKey = 'default',
   content = {},
+  siteId,               // ← NEW: passed by renderer
 }) {
   const s = resolveStyle(styleKey);
   const { eyebrow, heading, subheading, form = {}, info = [], map } = content;
@@ -29,7 +30,13 @@ export default function Contact({
   const header = (heading || subheading) && (
     <Stack gap={3} style={{ maxWidth: '560px' }}>
       {eyebrow && (
-        <span style={{ fontSize: '12px', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', color: styleKey === 'brand' ? s.textPrimary : color.brandPrimary }}>
+        <span style={{
+          fontSize: '12px',
+          fontWeight: 600,
+          letterSpacing: '0.05em',
+          textTransform: 'uppercase',
+          color: styleKey === 'brand' ? s.textPrimary : color.brandPrimary,
+        }}>
           {eyebrow}
         </span>
       )}
@@ -46,7 +53,7 @@ export default function Contact({
             {header}
             <ContactInfo items={info} s={s} />
           </Stack>
-          <ContactForm form={form} s={s} />
+          <ContactForm form={form} s={s} siteId={siteId} />
         </Split>
       )}
 
@@ -56,7 +63,7 @@ export default function Contact({
             {header}
           </Stack>
           <div style={{ width: '100%', maxWidth: '560px' }}>
-            <ContactForm form={form} s={s} />
+            <ContactForm form={form} s={s} siteId={siteId} />
           </div>
           <ContactInfo items={info} s={s} centered />
         </Stack>
@@ -91,7 +98,13 @@ function ContactInfo({ items, s, centered = false }) {
     <Stack gap={4} style={centered ? { alignItems: 'center' } : undefined}>
       {items.map((item, i) => (
         <Stack key={i} gap={1} style={centered ? { alignItems: 'center' } : undefined}>
-          <span style={{ fontSize: 'var(--text-xs)', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', color: s.textMuted }}>
+          <span style={{
+            fontSize: 'var(--text-xs)',
+            fontWeight: 600,
+            letterSpacing: '0.05em',
+            textTransform: 'uppercase',
+            color: s.textMuted,
+          }}>
             {item.label}
           </span>
           <span style={{ fontSize: 'var(--text-base)', color: s.textPrimary }}>
@@ -103,17 +116,55 @@ function ContactInfo({ items, s, centered = false }) {
   );
 }
 
-function ContactForm({ form, s }) {
-  const [fields, setFields] = useState({ name: '', email: '', message: '' });
-  const [submitted, setSubmitted] = useState(false);
-  const { nameLabel = 'Name', emailLabel = 'Email', messageLabel = 'Message', submitLabel = 'Send message' } = form;
+function ContactForm({ form, s, siteId }) {
+  const [fields, setFields] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    message: '',
+  });
+  const [status, setStatus] = useState('idle'); // idle | submitting | success | error
+  const [errorMsg, setErrorMsg] = useState('');
 
-  const handleSubmit = (e) => {
+  const {
+    nameLabel = 'Name',
+    emailLabel = 'Email',
+    phoneLabel = 'Phone',
+    messageLabel = 'Message',
+    submitLabel = 'Send message',
+  } = form;
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitted(true);
+    setStatus('submitting');
+    setErrorMsg('');
+
+    try {
+      const res = await fetch('/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          siteId,
+          ...fields,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!data.ok) {
+        setStatus('error');
+        setErrorMsg(data.error || 'Something went wrong.');
+        return;
+      }
+
+      setStatus('success');
+    } catch (err) {
+      setStatus('error');
+      setErrorMsg('Network error. Please try again.');
+    }
   };
 
-  if (submitted) {
+  if (status === 'success') {
     return (
       <div style={{
         padding: space(8),
@@ -123,10 +174,16 @@ function ContactForm({ form, s }) {
         color: 'var(--color-state-success-text)',
         textAlign: 'center',
       }}>
-        Thanks — we'll be in touch soon.
+        <div style={{ fontSize: '32px', marginBottom: 8 }}>✓</div>
+        <div style={{ fontWeight: 600, marginBottom: 4 }}>Thanks — we'll be in touch soon.</div>
+        <div style={{ fontSize: 'var(--text-sm)', opacity: 0.85 }}>
+          We received your message.
+        </div>
       </div>
     );
   }
+
+  const disabled = status === 'submitting';
 
   return (
     <form
@@ -146,14 +203,26 @@ function ContactForm({ form, s }) {
         value={fields.name}
         onChange={(e) => setFields({ ...fields, name: e.target.value })}
         required
+        disabled={disabled}
       />
+
       <Input
         label={emailLabel}
         type="email"
         value={fields.email}
         onChange={(e) => setFields({ ...fields, email: e.target.value })}
         required
+        disabled={disabled}
       />
+
+      <Input
+        label={phoneLabel}
+        type="tel"
+        value={fields.phone}
+        onChange={(e) => setFields({ ...fields, phone: e.target.value })}
+        disabled={disabled}
+      />
+
       <div style={{ display: 'flex', flexDirection: 'column', gap: space(2) }}>
         <label style={{ fontSize: 'var(--text-sm)', fontWeight: 500, color: s.textPrimary }}>
           {messageLabel}
@@ -162,6 +231,7 @@ function ContactForm({ form, s }) {
           value={fields.message}
           onChange={(e) => setFields({ ...fields, message: e.target.value })}
           required
+          disabled={disabled}
           rows={4}
           style={{
             width: '100%',
@@ -174,10 +244,31 @@ function ContactForm({ form, s }) {
             borderRadius: 'var(--radius-md)',
             outline: 'none',
             resize: 'vertical',
+            opacity: disabled ? 0.6 : 1,
           }}
         />
       </div>
-      <Button label={submitLabel} variant="primary" type="submit" fullWidth />
+
+      {status === 'error' && (
+        <div style={{
+          padding: `${space(3)} ${space(4)}`,
+          background: 'var(--color-state-error-bg)',
+          border: '1px solid var(--color-state-error-border)',
+          borderRadius: 'var(--radius-md)',
+          color: 'var(--color-state-error-text)',
+          fontSize: 'var(--text-sm)',
+        }}>
+          {errorMsg}
+        </div>
+      )}
+
+      <Button
+        label={disabled ? 'Sending...' : submitLabel}
+        variant="primary"
+        type="submit"
+        fullWidth
+        disabled={disabled}
+      />
     </form>
   );
 }

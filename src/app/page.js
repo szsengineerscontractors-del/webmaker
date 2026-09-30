@@ -1,18 +1,14 @@
-// src/app/site/[id]/page.jsx
-import { notFound } from 'next/navigation';
-import RenderTemplate from '@/renderer/RenderTemplate';
-import ThemeProvider from '@/theme/ThemeProvider';
-import { sites } from '@/lib/sites';
+// src/app/page.jsx
+import { redirect } from 'next/navigation';
+import { getCurrentUser } from '@/lib/auth';
 
-export default async function SitePage({ params }) {
-  const { id } = await params;
-  const site = sites.get(id);
+export default async function Home() {
+  const user = await getCurrentUser();
 
-  if (!site) notFound();
+  if (user) {
+    redirect('/dashboard');
+  }
 
-  return (
-    <ThemeProvider themeName={site.theme}>
-      <RenderTemplate template={site} />
-    </ThemeProvider>
-  );
+  // Not logged in — send them to SZDomains login
+  redirect('https://szsdomains.com/login');
 }

@@ -2,8 +2,8 @@
 import { sp } from './tokens';
 
 const DENSITY = {
-  sm: { y: 8,  yMd: 12 },
-  md: { y: 12, yMd: 20 },
+  sm: { y: 12, yMd: 16 },
+  md: { y: 16, yMd: 24 },
   lg: { y: 20, yMd: 32 },
 };
 

@@ -19,9 +19,12 @@ const STEPS = [
   { id: 5, label: 'Content' },
 ];
 
+/* ─── Navbar helpers ─── */
+
 const NAV_LINK_LABELS = {
   features: 'Services',
   pricing: 'Pricing',
+  about: 'About',
   gallery: 'Gallery',
   testimonials: 'Reviews',
   contact: 'Contact',
@@ -34,18 +37,15 @@ const HIDDEN_IN_NAV = new Set(['stats', 'team']);
 
 function buildNavLinks(selectedSections) {
   const links = [{ label: 'Home', href: '#top' }];
-
   for (const type of selectedSections) {
     if (type === 'hero') continue;
     if (HIDDEN_IN_NAV.has(type)) continue;
     if (type === 'contact') continue;
-
     links.push({
       label: NAV_LINK_LABELS[type] ?? type,
       href: `#${type}`,
     });
   }
-
   return links;
 }
 
@@ -64,15 +64,134 @@ function layoutFor(industry, type) {
   return industry.layout?.[type] ?? getDefaultLayout(type);
 }
 
-export default function Wizard({ onPublish }) {
+/* ─── Footer helpers ─── */
+
+const FOOTER_COLUMN_MAP = {
+  about: 'Explore',
+  features: 'Explore',
+  gallery: 'Explore',
+  testimonials: 'Explore',
+  pricing: 'Explore',
+  team: 'Explore',
+  stats: 'Explore',
+  contact: 'Contact',
+  cta: 'Contact',
+};
+
+const FOOTER_LINK_LABELS = {
+  about: 'About',
+  features: 'Services',
+  gallery: 'Gallery',
+  testimonials: 'Reviews',
+  pricing: 'Pricing',
+  team: 'Team',
+  stats: 'About',
+  contact: 'Contact',
+};
+
+function buildFooter(state, industry) {
+  const { selectedSections = [], businessName, tagline } = state;
+
+  const exploreLinks = [];
+  const contactLinks = [];
+
+  for (const type of selectedSections) {
+    if (type === 'hero') continue;
+    if (!FOOTER_LINK_LABELS[type]) continue;
+
+    const link = {
+      label: FOOTER_LINK_LABELS[type],
+      href: `#${type}`,
+    };
+
+    if (FOOTER_COLUMN_MAP[type] === 'Contact') {
+      contactLinks.push(link);
+    } else {
+      exploreLinks.push(link);
+    }
+  }
+
+  const columns = [];
+
+  if (exploreLinks.length > 0) {
+    columns.push({ heading: 'Explore', links: exploreLinks });
+  }
+  if (contactLinks.length > 0) {
+    columns.push({ heading: 'Get in touch', links: contactLinks });
+  }
+
+  columns.push({
+    heading: 'Company',
+    links: [
+      { label: 'About', href: '#about' },
+      { label: 'Careers', href: '#careers' },
+      { label: 'Privacy', href: '#privacy' },
+      { label: 'Terms', href: '#terms' },
+    ],
+  });
+
+  return {
+    type: 'footer',
+    layout: 'multicol',
+    style: 'dark',
+    content: {
+      brand: {
+        name: businessName || 'Your Business',
+        tagline: tagline || '',
+      },
+      columns,
+      legal: `© ${new Date().getFullYear()} ${businessName || 'Your Business'}. All rights reserved.`,
+      social: [
+        { label: 'Twitter', href: 'https://twitter.com' },
+        { label: 'Instagram', href: 'https://instagram.com' },
+        { label: 'Facebook', href: 'https://facebook.com' },
+      ],
+    },
+  };
+}
+
+/* ─── Wizard ─── */
+
+// Convert a saved template → wizard state (for re-editing)
+function stateFromTemplate(template) {
+  if (!template) return null;
+
+  const sections = template.sections ?? [];
+  const navbarContent = template.frames?.navbar?.content ?? {};
+  const footerContent = template.frames?.footer?.content ?? {};
+
+  return {
+    industryId: template.industryId ?? null,
+    businessName: template.name ?? '',
+    tagline: footerContent.brand?.tagline ?? '',
+    theme: template.theme ?? null,
+    selectedSections: sections.map((s) => s.type),
+    content: Object.fromEntries(
+      sections.map((s) => [s.type, s.content ?? {}])
+    ),
+  };
+}
+
+export default function Wizard({
+  onPublish,
+  initialState = null,
+  editMode = false,
+  templateId = null,
+}) {
   const [step, setStep] = useState(1);
-  const [state, setState] = useState({
-    industryId: null,
-    businessName: '',
-    tagline: '',
-    theme: null,
-    selectedSections: [],
-    content: {},
+  const [state, setState] = useState(() => {
+    if (initialState) {
+      const restored = stateFromTemplate(initialState);
+      if (restored) return restored;
+    }
+    return {
+      industryId: null,
+      businessName: '',
+      tagline: '',
+      theme: null,
+      selectedSections: [],
+      content: {},
+    };
   });
 
   const industry = state.industryId ? industries[state.industryId] : null;
@@ -105,7 +224,8 @@ export default function Wizard({ onPublish }) {
     });
 
     return {
-      id: `site-${Date.now()}`,
+      id: templateId ?? `site-${Date.now()}`,
+      industryId: state.industryId,        // ← FIX: required by Site model
       name: state.businessName || 'Untitled Site',
       theme: state.theme || industry.theme,
       frames: {
@@ -131,18 +251,7 @@ export default function Wizard({ onPublish }) {
             ],
           },
         },
-        footer: {
-          type: 'footer',
-          layout: 'simple',
-          style: 'dark',
-          content: {
-            brand: {
-              name: state.businessName || 'Your Business',
-              tagline: state.tagline || '',
-            },
-            columns: [],
-          },
-        },
+        footer: buildFooter(state, industry),
       },
       sections,
     };
@@ -208,6 +317,7 @@ export default function Wizard({ onPublish }) {
             content={state.content}
             onChange={(content) => update({ content })}
             onBack={back}
+            editMode={editMode}
             onPublish={() => onPublish?.(buildTemplate())}
           />
         )}

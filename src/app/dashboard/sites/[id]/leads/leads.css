@@ -1,0 +1,148 @@
+/* src/app/dashboard/sites/[id]/leads/leads.css */
+
+.leads {
+  min-height: 100vh;
+  background: var(--color-background-subtle);
+  padding: 48px 16px;
+}
+
+.leads-inner {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.leads-header {
+  margin-bottom: 24px;
+}
+
+.leads-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+}
+
+.leads-back:hover {
+  color: var(--color-text-primary);
+}
+
+.leads-title-row {
+  margin-bottom: 32px;
+}
+
+.leads-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0 0 4px;
+}
+
+.leads-subtitle {
+  font-size: 14px;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.leads-empty {
+  background: var(--color-surface-1);
+  border: 1px solid var(--color-border-default);
+  border-radius: 16px;
+  padding: 64px 32px;
+  text-align: center;
+}
+
+.leads-empty-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  line-height: 1;
+}
+
+.leads-empty h2 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0 0 8px;
+}
+
+.leads-empty p {
+  font-size: 14px;
+  color: var(--color-text-muted);
+  margin: 0;
+  max-width: 360px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.leads-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.lead {
+  background: var(--color-surface-1);
+  border: 1px solid var(--color-border-default);
+  border-radius: 12px;
+  padding: 20px;
+  transition: border-color 0.15s;
+}
+
+.lead:hover {
+  border-color: var(--color-brand-primary);
+}
+
+.lead-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.lead-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: 2px;
+}
+
+.lead-contact {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+}
+
+.lead-contact a {
+  color: var(--color-brand-primary);
+  text-decoration: none;
+}
+
+.lead-contact a:hover {
+  text-decoration: underline;
+}
+
+.lead-sep {
+  color: var(--color-text-muted);
+}
+
+.lead-date {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.lead-message {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-text-primary);
+  white-space: pre-wrap;
+  padding-top: 12px;
+  border-top: 1px solid var(--color-border-subtle);
+}

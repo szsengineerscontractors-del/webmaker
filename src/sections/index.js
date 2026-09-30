@@ -8,6 +8,8 @@ import Testimonials from './Testimonials';
 import Contact      from './Contact';
 import Team         from './Team';
 import Stats        from './Stats';
+import About from './About';
+import { meta as aboutMeta } from './About';
 
 import { meta as heroMeta }         from './Hero';
 import { meta as featuresMeta }     from './Features';
@@ -22,7 +24,7 @@ import { meta as statsMeta }        from './Stats';
 export {
   Hero, Features, Pricing, CTA,
   Gallery, Testimonials, Contact,
-  Team, Stats,
+  Team, Stats,About,
 };
 
 export const sectionRegistry = {
@@ -35,6 +37,7 @@ export const sectionRegistry = {
   contact:      { component: Contact,      meta: contactMeta },
   team:         { component: Team,         meta: teamMeta },
   stats:        { component: Stats,        meta: statsMeta },
+  bout: { component: About, meta: aboutMeta },
 };
 
 /* ─────────────────────────────────────────────────────────────

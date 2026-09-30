@@ -1,8 +1,8 @@
-// structures/Switcher.jsx
+// src/structures/Switcher.jsx
 import { sp, breakpoints } from './tokens';
 
 export default function Switcher({
-  threshold = 'md',     // breakpoint key
+  threshold = 'md',
   gap = 8,
   reverse = false,
   align = 'center',
@@ -12,21 +12,23 @@ export default function Switcher({
   children,
   ...rest
 }) {
+  // Deterministic uid
+  const uid = `switcher-${threshold}-${reverse}`;
   const min = breakpoints[threshold];
   const dir = reverse ? 'row-reverse' : 'row';
 
   const rules = [
-    `[data-switcher] { flex-direction: column; }`,
+    `[data-switcher="${uid}"] { flex-direction: column; }`,
     min
-      ? `@media (min-width: ${min}px) { [data-switcher] { flex-direction: ${dir}; } }`
+      ? `@media (min-width: ${min}px) { [data-switcher="${uid}"] { flex-direction: ${dir}; } }`
       : '',
   ].filter(Boolean);
 
   return (
     <>
-      <style>{rules.join('\n')}</style>
+      <style suppressHydrationWarning>{rules.join('\n')}</style>
       <Tag
-        data-switcher
+        data-switcher={uid}
         className={className}
         style={{
           display: 'flex',

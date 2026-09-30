@@ -1,0 +1,48 @@
+/* src/app/build/build.css */
+
+.build {
+  min-height: 100vh;
+  background: var(--color-background-subtle);
+  padding: 40px 16px;
+}
+
+.build-inner {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.build-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.build-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.build-back:hover {
+  color: var(--color-text-primary);
+}
+
+.build-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.build-user {
+  font-size: 13px;
+  color: var(--color-text-muted);
+}

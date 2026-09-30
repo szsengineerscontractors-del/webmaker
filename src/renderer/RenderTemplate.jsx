@@ -13,37 +13,28 @@ import { Section } from '@/structures';
  *   sections:  [ { type, layout, style, density, content } ]
  * }
  */
-export default function RenderTemplate({ template }) {
+export default function RenderTemplate({ template, siteId }) {
   const { frames = {}, sections = [] } = template;
 
   return (
     <>
-      {/* Top chrome */}
       {frames.announcement && <FrameSlot instance={frames.announcement} />}
       {frames.navbar && <FrameSlot instance={frames.navbar} />}
 
-      {/* Page content */}
       <main>
         {sections.map((instance, i) => (
-          <SectionSlot key={i} instance={instance} index={i} />
+          <SectionSlot key={i} instance={instance} index={i} siteId={siteId} />
         ))}
       </main>
 
-      {/* Bottom chrome */}
       {frames.footer && <FrameSlot instance={frames.footer} />}
     </>
   );
 }
 
-function SectionSlot({ instance, index }) {
+function SectionSlot({ instance, index, siteId }) {
   const entry = sectionRegistry[instance.type];
-
-  if (!entry) {
-    if (process.env.NODE_ENV !== 'production') {
-      console.warn(`[RenderTemplate] Unknown section: "${instance.type}"`);
-    }
-    return null;
-  }
+  if (!entry) return null;
 
   const { component: Component } = entry;
 
@@ -56,11 +47,11 @@ function SectionSlot({ instance, index }) {
         layout={instance.layout}
         style={instance.style}
         content={instance.content ?? {}}
+        siteId={siteId}        
       />
     </Section>
   );
 }
-
 function FrameSlot({ instance }) {
   const entry = frameRegistry[instance.type];
 

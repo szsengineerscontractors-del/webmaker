@@ -1,12 +1,11 @@
 // src/wizard/Step4Content.jsx
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { SECTION_LABELS } from './industries';
 
 /* ─────────────────────────────────────────────────────────────
-   Field type registry — decides which input to render for a
-   given key, based on its value in the placeholder.
+   Field type registry
    ───────────────────────────────────────────────────────────── */
 
 const FIELD_LABELS = {
@@ -24,9 +23,9 @@ const FIELD_LABELS = {
   prefix: 'Prefix',
   suffix: 'Suffix',
   rating: 'Rating (1–5)',
-  avatar: 'Avatar URL',
-  image: 'Image URL',
-  src: 'Image URL',
+  avatar: 'Avatar',
+  image: 'Image',
+  src: 'Image',
   alt: 'Alt text',
   href: 'Link',
   ctaLabel: 'Button text',
@@ -34,15 +33,14 @@ const FIELD_LABELS = {
   monthlyPrice: 'Monthly price',
   yearlyPrice: 'Yearly price',
   featured: 'Featured plan',
-  address: 'Address',
-  phone: 'Phone',
-  email: 'Email',
-  hours: 'Hours',
 };
 
 const TEXTAREA_KEYS = new Set(['subheading', 'body', 'bio', 'quote', 'description']);
 const NUMBER_KEYS = new Set(['rating', 'monthlyPrice', 'yearlyPrice']);
 const BOOLEAN_KEYS = new Set(['featured']);
+
+// Fields that render as an ImageField
+const IMAGE_KEYS = new Set(['image', 'src', 'avatar']);
 
 const ADD_LABELS = {
   items: 'item',
@@ -139,11 +137,10 @@ export default function Step4Content({
 }
 
 /* ─────────────────────────────────────────────────────────────
-   SectionForm — renders inputs for every field in the section
+   SectionForm
    ───────────────────────────────────────────────────────────── */
 
 function SectionForm({ placeholder, value, onChange }) {
-  // Merge: user edits override placeholder
   const data = { ...placeholder, ...value };
 
   const setField = (key, val) => onChange({ [key]: val });
@@ -164,11 +161,21 @@ function SectionForm({ placeholder, value, onChange }) {
 }
 
 /* ─────────────────────────────────────────────────────────────
-   FieldRenderer — decides what kind of input to render
-   based on the field's shape.
+   FieldRenderer — dispatch to the right input
    ───────────────────────────────────────────────────────────── */
 
 function FieldRenderer({ fieldKey, value, placeholder, onChange }) {
+  // Image fields — URL with preview
+  if (IMAGE_KEYS.has(fieldKey)) {
+    return (
+      <ImageField
+        fieldKey={fieldKey}
+        value={value ?? placeholder ?? ''}
+        onChange={onChange}
+      />
+    );
+  }
+
   // CTA objects — { label, href }
   if (isCtaObject(value) || isCtaObject(placeholder)) {
     return (
@@ -180,7 +187,7 @@ function FieldRenderer({ fieldKey, value, placeholder, onChange }) {
     );
   }
 
-  // Arrays — items, members, tiers, etc.
+  // Arrays
   if (Array.isArray(value) || Array.isArray(placeholder)) {
     return (
       <ArrayField
@@ -203,12 +210,12 @@ function FieldRenderer({ fieldKey, value, placeholder, onChange }) {
     );
   }
 
-  // Skip object-only fields we don't handle (like {type, value} for brand)
+  // Skip opaque objects
   if (value && typeof value === 'object' && !Array.isArray(value)) {
     return null;
   }
 
-  // Everything else is a scalar
+  // Scalars
   return (
     <ScalarField
       fieldKey={fieldKey}
@@ -219,7 +226,140 @@ function FieldRenderer({ fieldKey, value, placeholder, onChange }) {
 }
 
 /* ─────────────────────────────────────────────────────────────
-   ScalarField — text, textarea, number
+   ImageField — URL input with thumbnail preview
+   ───────────────────────────────────────────────────────────── */
+
+function ImageField({ fieldKey, value, onChange }) {
+  const label = FIELD_LABELS[fieldKey] ?? humanize(fieldKey);
+  const [urlInput, setUrlInput] = useState(value ?? '');
+  const [imgError, setImgError] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState('');
+  const fileInputRef = useRef(null);
+
+  const applyUrl = (url) => {
+    setImgError(false);
+    onChange(url);
+  };
+
+  const handleFileSelect = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadError('');
+    setUploading(true);
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      if (!data.ok) {
+        setUploadError(data.error || 'Upload failed');
+        return;
+      }
+
+      setUrlInput(data.url);
+      applyUrl(data.url);
+    } catch (err) {
+      setUploadError('Network error. Try again.');
+    } finally {
+      setUploading(false);
+      // Reset the input so the same file can be selected again
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
+  return (
+    <div className="image-field">
+      <span className="wizard-field-label">{label}</span>
+
+      <div className="image-field-body">
+        {/* Preview */}
+        <div className="image-field-preview">
+          {uploading ? (
+            <div className="image-field-placeholder">⏳</div>
+          ) : value && !imgError ? (
+            <img
+              src={value}
+              alt=""
+              onError={() => setImgError(true)}
+            />
+          ) : (
+            <div className="image-field-placeholder">
+              {imgError ? '⚠' : '🖼'}
+            </div>
+          )}
+        </div>
+
+        {/* Controls */}
+        <div className="image-field-controls">
+          {/* Upload button + hidden input */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleFileSelect}
+            style={{ display: 'none' }}
+          />
+
+          <div className="image-field-actions">
+            <button
+              type="button"
+              className="image-field-btn primary"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={uploading}
+            >
+              {uploading ? 'Uploading...' : 'Upload image'}
+            </button>
+
+            {value && !uploading && (
+              <button
+                type="button"
+                className="image-field-btn danger"
+                onClick={() => {
+                  setUrlInput('');
+                  applyUrl('');
+                }}
+              >
+                Remove
+              </button>
+            )}
+          </div>
+
+          {/* URL input as an alternative */}
+          <input
+            className="wizard-input"
+            type="url"
+            placeholder="Or paste an image URL…"
+            value={urlInput}
+            onChange={(e) => setUrlInput(e.target.value)}
+            onBlur={() => applyUrl(urlInput)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                applyUrl(urlInput);
+              }
+            }}
+            disabled={uploading}
+          />
+
+          {uploadError && (
+            <div className="image-field-error">{uploadError}</div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+/* ─────────────────────────────────────────────────────────────
+   ScalarField
    ───────────────────────────────────────────────────────────── */
 
 function ScalarField({ fieldKey, value, onChange }) {
@@ -269,7 +409,7 @@ function ScalarField({ fieldKey, value, onChange }) {
 }
 
 /* ─────────────────────────────────────────────────────────────
-   BooleanField — checkbox
+   BooleanField
    ───────────────────────────────────────────────────────────── */
 
 function BooleanField({ fieldKey, value, onChange }) {
@@ -287,7 +427,7 @@ function BooleanField({ fieldKey, value, onChange }) {
 }
 
 /* ─────────────────────────────────────────────────────────────
-   CtaField — label + href pair
+   CtaField — { label, href }
    ───────────────────────────────────────────────────────────── */
 
 function CtaField({ fieldKey, value, onChange }) {
@@ -318,7 +458,7 @@ function CtaField({ fieldKey, value, onChange }) {
 }
 
 /* ─────────────────────────────────────────────────────────────
-   ArrayField — list of items with add/remove
+   ArrayField — list with add/remove/reorder
    ───────────────────────────────────────────────────────────── */
 
 function ArrayField({ fieldKey, items, placeholderItems, onChange }) {
@@ -326,7 +466,17 @@ function ArrayField({ fieldKey, items, placeholderItems, onChange }) {
   const addLabel = ADD_LABELS[fieldKey] ?? 'item';
 
   const addItem = () => {
-    const template = items[0] ?? placeholderItems[0] ?? {};
+    const template = items[0] ?? placeholderItems[0];
+    if (!template) {
+      // Empty array — create a generic item
+      // For images, use a { src, alt } shape
+      if (fieldKey === 'images') {
+        onChange([...items, { src: '', alt: '' }]);
+      } else {
+        onChange([...items, {}]);
+      }
+      return;
+    }
     // Build a blank copy of the template shape
     const blank = Object.fromEntries(
       Object.entries(template).map(([k, v]) => [k, blankValue(v)])
@@ -386,20 +536,26 @@ function ArrayField({ fieldKey, items, placeholderItems, onChange }) {
           </div>
 
           <div className="section-form-array-item-body">
-            {Object.entries(item).map(([k, v]) => {
-              // Skip nested arrays inside arrays (rare)
-              if (Array.isArray(v)) return null;
-
-              return (
-                <FieldRenderer
-                  key={k}
-                  fieldKey={k}
-                  value={v}
-                  placeholder={placeholderItems[i]?.[k]}
-                  onChange={(newVal) => updateItem(i, { [k]: newVal })}
-                />
-              );
-            })}
+            {typeof item === 'string' ? (
+              <ImageField
+                fieldKey="src"
+                value={item}
+                onChange={(val) => updateItem(i, val)}
+              />
+            ) : (
+              Object.entries(item).map(([k, v]) => {
+                if (Array.isArray(v)) return null;
+                return (
+                  <FieldRenderer
+                    key={k}
+                    fieldKey={k}
+                    value={v}
+                    placeholder={placeholderItems[i]?.[k]}
+                    onChange={(newVal) => updateItem(i, { [k]: newVal })}
+                  />
+                );
+              })
+            )}
           </div>
         </div>
       ))}
@@ -420,10 +576,12 @@ function ArrayField({ fieldKey, items, placeholderItems, onChange }) {
    ───────────────────────────────────────────────────────────── */
 
 function isCtaObject(val) {
-  return val
-    && typeof val === 'object'
-    && !Array.isArray(val)
-    && ('label' in val || 'href' in val);
+  return (
+    val &&
+    typeof val === 'object' &&
+    !Array.isArray(val) &&
+    ('label' in val || 'href' in val)
+  );
 }
 
 function blankValue(v) {
@@ -432,7 +590,9 @@ function blankValue(v) {
   if (typeof v === 'boolean') return false;
   if (Array.isArray(v)) return [];
   if (v && typeof v === 'object') {
-    return Object.fromEntries(Object.entries(v).map(([k, sub]) => [k, blankValue(sub)]));
+    return Object.fromEntries(
+      Object.entries(v).map(([k, sub]) => [k, blankValue(sub)])
+    );
   }
   return '';
 }
