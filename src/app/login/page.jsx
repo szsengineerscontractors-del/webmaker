@@ -10,7 +10,7 @@ export default async function LoginPage({ searchParams }) {
   const user = await getCurrentUser();
   if (user) redirect(target);
 
-  const SZSDOMAINS = process.env.NEXT_PUBLIC_SZSDOMAINS_URL || 'https://szsdomains.com';
+  const SZSDOMAINS = process.env.NEXT_PUBLIC_SZSDOMAINS_URL || 'https://szsdomains.vercel.app';
   const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
 
   // Return URL — where SZDomains sends the user after login
