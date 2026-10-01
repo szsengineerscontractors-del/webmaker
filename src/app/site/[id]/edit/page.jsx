@@ -10,7 +10,7 @@ import './edit.css';
 export default async function EditPage({ params }) {
   const { id } = await params;
   const user = await getCurrentUser();
-  if (!user) redirect('/login');
+  if (!user) redirect(`/login?next=/site/${id}/edit`);
 
   await connectDB();
   const site = await Site.findById(id).lean();

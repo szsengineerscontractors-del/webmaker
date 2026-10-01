@@ -7,7 +7,7 @@ import './build.css';
 
 export default async function BuildPage() {
   const user = await getCurrentUser();
-  if (!user) redirect('/login');
+  if (!user) redirect('/login?next=/build');
 
   return (
     <div className="build">

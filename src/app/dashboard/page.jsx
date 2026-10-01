@@ -8,7 +8,7 @@ import './dashboard.css';
 
 export default async function Dashboard() {
   const user = await getCurrentUser();
-  if (!user) redirect('/login');
+  if (!user) redirect('/login?next=/dashboard');
 
   await connectDB();
   const sites = await Site.find({ owner: user._id })
