@@ -1,9 +1,5 @@
 // sections/Footer.jsx
-
-
 'use client'
-
-
 
 import { Container, Stack, Grid, Inline } from '../structures';
 import { Heading, Text, Link } from '../components';
@@ -18,10 +14,30 @@ export const meta = sectionMeta(
   ['default', 'muted', 'dark', 'brand']
 );
 
+/**
+ * Turn a stored href into a real URL:
+ *   "#about"       → "#about"                     (in-page anchor)
+ *   "https://..."  → "https://..."                (external)
+ *   "/site/xyz"    → "/site/xyz"                  (already resolved)
+ *   "/"            → "/site/{siteId}"             (home)
+ *   "/about"       → "/site/{siteId}/about"       (page route)
+ */
+function resolveHref(href, siteId) {
+  if (!href || href === '#') return '#';
+  if (href.startsWith('#')) return href;
+  if (href.startsWith('http://') || href.startsWith('https://')) return href;
+  if (href.startsWith('mailto:') || href.startsWith('tel:')) return href;
+  if (href.startsWith('/site/')) return href;
+  if (!siteId) return href;
+  if (href === '/') return `/site/${siteId}`;
+  return `/site/${siteId}${href.startsWith('/') ? href : '/' + href}`;
+}
+
 export default function Footer({
   layout = 'multicol',
   style: styleKey = 'default',
   content = {},
+  siteId,
 }) {
   const s = resolveStyle(styleKey);
   const { brand, columns = [], legal, social = [] } = content;
@@ -51,7 +67,7 @@ export default function Footer({
                     {col.heading}
                   </span>
                   {col.links.map((link, j) => (
-                    <Link key={j} href={link.href} style={{ color: s.textSecondary, textDecoration: 'none', fontSize: text('sm') }}>
+                    <Link key={j} href={resolveHref(link.href, siteId)} style={{ color: s.textSecondary, textDecoration: 'none', fontSize: text('sm') }}>
                       {link.label}
                     </Link>
                   ))}
@@ -66,7 +82,7 @@ export default function Footer({
               </Stack>
               <Inline gap={6}>
                 {columns.flatMap((col) => col.links).map((link, i) => (
-                  <Link key={i} href={link.href} style={{ color: s.textSecondary, textDecoration: 'none', fontSize: text('sm') }}>
+                  <Link key={i} href={resolveHref(link.href, siteId)} style={{ color: s.textSecondary, textDecoration: 'none', fontSize: text('sm') }}>
                     {link.label}
                   </Link>
                 ))}
@@ -82,7 +98,7 @@ export default function Footer({
               {social.length > 0 && (
                 <Inline gap={4}>
                   {social.map((item, i) => (
-                    <Link key={i} href={item.href} style={{ color: s.textMuted, textDecoration: 'none', fontSize: text('sm') }}>
+                    <Link key={i} href={resolveHref(item.href, siteId)} style={{ color: s.textMuted, textDecoration: 'none', fontSize: text('sm') }}>
                       {item.label}
                     </Link>
                   ))}

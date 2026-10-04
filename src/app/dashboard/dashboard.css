@@ -207,3 +207,159 @@
 .dash-card-leads:hover {
   text-decoration: underline;
 }
+
+/* Delete button on the card */
+.dash-card-btn-delete {
+  color: var(--color-state-error-text);
+  background: var(--color-state-error-bg);
+  border: 1px solid transparent;
+  flex: 0 0 auto;              /* don't grow — icon-sized */
+  padding: 8px 10px;
+}
+
+.dash-card-btn-delete:hover {
+  background: var(--color-state-error-text);
+  color: #fff;
+}
+
+/* Adjust card actions to fit 3 buttons */
+.dash-card-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.dash-card-btn-view,
+.dash-card-btn-edit {
+  flex: 1;
+}
+
+/* Modal backdrop */
+.delete-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 16px;
+  animation: fadeIn 150ms ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Modal */
+.delete-modal {
+  background: var(--color-background-base);
+  border: 1px solid var(--color-border-default);
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 400px;
+  width: 100%;
+  animation: slideUp 200ms ease;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(8px); opacity: 0; }
+  to   { transform: translateY(0);   opacity: 1; }
+}
+
+.delete-modal-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0 0 8px;
+}
+
+.delete-modal-body {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin: 0 0 20px;
+}
+
+.delete-modal-error {
+  font-size: 13px;
+  color: var(--color-state-error-text);
+  background: var(--color-state-error-bg);
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin: 0 0 16px;
+}
+
+.delete-modal-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.delete-modal-btn {
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: inherit;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: opacity 0.15s, background 0.15s;
+}
+
+.delete-modal-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.delete-modal-btn-cancel {
+  background: transparent;
+  border-color: var(--color-border-default);
+  color: var(--color-text-primary);
+}
+
+.delete-modal-btn-cancel:hover:not(:disabled) {
+  background: var(--color-surface-2);
+}
+
+.delete-modal-btn-confirm {
+  background: var(--color-state-error-text);
+  color: #fff;
+}
+
+.delete-modal-btn-confirm:hover:not(:disabled) {
+  opacity: 0.9;
+}
+.dash-card-subdomain {
+  display: inline-block;
+  margin: 8px 0 12px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  color: #4b5563;
+  background: #f3f4f6;
+  border-radius: 999px;
+  text-decoration: none;
+  transition: background 120ms ease, color 120ms ease;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dash-card-subdomain:hover {
+  background: #e5e7eb;
+  color: #111827;
+}
+
+.dash-card-subdomain-empty {
+  color: #6b7280;
+  background: transparent;
+  border: 1px dashed #d1d5db;
+}
+
+.dash-card-subdomain-empty:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+  color: #374151;
+}

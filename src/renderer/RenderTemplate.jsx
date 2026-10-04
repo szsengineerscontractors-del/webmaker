@@ -3,23 +3,25 @@ import { sectionRegistry } from '@/sections';
 import { frameRegistry } from '@/frames';
 import { Section } from '@/structures';
 
-/**
- * Renders a full page from a template JSON.
- *
- * Template shape:
- * {
- *   id, name, theme,
- *   frames:    { navbar, announcement, footer },
- *   sections:  [ { type, layout, style, density, content } ]
- * }
- */
-export default function RenderTemplate({ template, siteId }) {
-  const { frames = {}, sections = [] } = template;
+export default function RenderTemplate({ template, page, siteId, routingMode = 'path' }) {
+  console.log('[RT] routingMode:', routingMode);
+  const { frames = {} } = template;
+
+  const resolvedPage =
+    page ??
+    (template.pages && template.pages[0]) ??
+    { sections: template.sections ?? [] };
+
+  const sections = resolvedPage.sections ?? [];
 
   return (
     <>
-      {frames.announcement && <FrameSlot instance={frames.announcement} />}
-      {frames.navbar && <FrameSlot instance={frames.navbar} />}
+      {frames.announcement && (
+        <FrameSlot instance={frames.announcement} siteId={siteId} routingMode={routingMode} />
+      )}
+      {frames.navbar && (
+        <FrameSlot instance={frames.navbar} siteId={siteId} routingMode={routingMode} />
+      )}
 
       <main>
         {sections.map((instance, i) => (
@@ -27,7 +29,9 @@ export default function RenderTemplate({ template, siteId }) {
         ))}
       </main>
 
-      {frames.footer && <FrameSlot instance={frames.footer} />}
+      {frames.footer && (
+        <FrameSlot instance={frames.footer} siteId={siteId} routingMode={routingMode} />
+      )}
     </>
   );
 }
@@ -47,20 +51,15 @@ function SectionSlot({ instance, index, siteId }) {
         layout={instance.layout}
         style={instance.style}
         content={instance.content ?? {}}
-        siteId={siteId}        
+        siteId={siteId}
       />
     </Section>
   );
 }
-function FrameSlot({ instance }) {
-  const entry = frameRegistry[instance.type];
 
-  if (!entry) {
-    if (process.env.NODE_ENV !== 'production') {
-      console.warn(`[RenderTemplate] Unknown frame: "${instance.type}"`);
-    }
-    return null;
-  }
+function FrameSlot({ instance, siteId, routingMode }) {
+  const entry = frameRegistry[instance.type];
+  if (!entry) return null;
 
   const { component: Component } = entry;
 
@@ -70,6 +69,8 @@ function FrameSlot({ instance }) {
       style={instance.style}
       behavior={instance.behavior}
       content={instance.content ?? {}}
+      siteId={siteId}
+      routingMode={routingMode}
     />
   );
 }

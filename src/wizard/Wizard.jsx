@@ -19,34 +19,55 @@ const STEPS = [
   { id: 5, label: 'Content' },
 ];
 
+const TEMPLATE_VERSION = 1;
+
+const RESERVED_SLUGS = new Set([
+  'edit', 'dashboard', 'api', 'build', 'site', 'login', 'new',
+]);
+
+const RESERVED_SUBDOMAINS = new Set([
+  'www', 'app', 'api', 'admin', 'dashboard', 'builder', 'login', 'signup', 'mail',
+]);
+
+/* ─── Slug helpers ─── */
+
+export function slugify(title) {
+  return String(title || '')
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+export function isReservedSlug(slug) {
+  return RESERVED_SLUGS.has(slug);
+}
+
+export function isReservedSubdomain(sub) {
+  return RESERVED_SUBDOMAINS.has(sub);
+}
+
 /* ─── Navbar helpers ─── */
 
-const NAV_LINK_LABELS = {
-  features: 'Services',
-  pricing: 'Pricing',
-  about: 'About',
-  gallery: 'Gallery',
-  testimonials: 'Reviews',
-  contact: 'Contact',
-  cta: 'Contact',
-  team: 'Team',
-  stats: 'About',
-};
+/**
+ * Navbar links = pages. Home → "/", other pages → "/{slug}".
+ * resolveHref in the Navbar component turns these into /site/{id}/...
+ * at render time.
+ */
+function buildNavLinks(pages) {
+  return pages.map((page) => ({
+    label: page.title || 'Untitled',
+    href: page.slug === '' ? '/' : `/${page.slug}`,
+  }));
+}
 
-const HIDDEN_IN_NAV = new Set(['stats', 'team']);
-
-function buildNavLinks(selectedSections) {
-  const links = [{ label: 'Home', href: '#top' }];
-  for (const type of selectedSections) {
-    if (type === 'hero') continue;
-    if (HIDDEN_IN_NAV.has(type)) continue;
-    if (type === 'contact') continue;
-    links.push({
-      label: NAV_LINK_LABELS[type] ?? type,
-      href: `#${type}`,
-    });
-  }
-  return links;
+/**
+ * CTA points to a contact page if one exists, else falls back to
+ * the #contact anchor on the current page.
+ */
+function navCtaHref(pages) {
+  const contactPage = pages.find((p) => p.slug === 'contact');
+  return contactPage ? '/contact' : '#contact';
 }
 
 function navCtaLabel(industryId) {
@@ -66,69 +87,21 @@ function layoutFor(industry, type) {
 
 /* ─── Footer helpers ─── */
 
-const FOOTER_COLUMN_MAP = {
-  about: 'Explore',
-  features: 'Explore',
-  gallery: 'Explore',
-  testimonials: 'Explore',
-  pricing: 'Explore',
-  team: 'Explore',
-  stats: 'Explore',
-  contact: 'Contact',
-  cta: 'Contact',
-};
-
-const FOOTER_LINK_LABELS = {
-  about: 'About',
-  features: 'Services',
-  gallery: 'Gallery',
-  testimonials: 'Reviews',
-  pricing: 'Pricing',
-  team: 'Team',
-  stats: 'About',
-  contact: 'Contact',
-};
-
 function buildFooter(state, industry) {
-  const { selectedSections = [], businessName, tagline } = state;
+  const { pages = [], businessName, tagline } = state;
 
-  const exploreLinks = [];
-  const contactLinks = [];
-
-  for (const type of selectedSections) {
-    if (type === 'hero') continue;
-    if (!FOOTER_LINK_LABELS[type]) continue;
-
-    const link = {
-      label: FOOTER_LINK_LABELS[type],
-      href: `#${type}`,
-    };
-
-    if (FOOTER_COLUMN_MAP[type] === 'Contact') {
-      contactLinks.push(link);
-    } else {
-      exploreLinks.push(link);
-    }
-  }
+  const pageLinks = pages
+    .filter((p) => p.slug || p.title)
+    .map((p) => ({
+      label: p.title || 'Home',
+      href: p.slug === '' ? '/' : `/${p.slug}`,
+    }));
 
   const columns = [];
 
-  if (exploreLinks.length > 0) {
-    columns.push({ heading: 'Explore', links: exploreLinks });
+  if (pageLinks.length > 0) {
+    columns.push({ heading: 'Explore', links: pageLinks });
   }
-  if (contactLinks.length > 0) {
-    columns.push({ heading: 'Get in touch', links: contactLinks });
-  }
-
-  columns.push({
-    heading: 'Company',
-    links: [
-      { label: 'About', href: '#about' },
-      { label: 'Careers', href: '#careers' },
-      { label: 'Privacy', href: '#privacy' },
-      { label: 'Terms', href: '#terms' },
-    ],
-  });
 
   return {
     type: 'footer',
@@ -150,27 +123,60 @@ function buildFooter(state, industry) {
   };
 }
 
-/* ─── Wizard ─── */
+/* ─── Template ↔ wizard state ─── */
 
-// Convert a saved template → wizard state (for re-editing)
-function stateFromTemplate(template) {
-  if (!template) return null;
-
-  const sections = template.sections ?? [];
-  const navbarContent = template.frames?.navbar?.content ?? {};
-  const footerContent = template.frames?.footer?.content ?? {};
-
+function makeHomePage(selectedSections = [], content = {}) {
   return {
-    industryId: template.industryId ?? null,
-    businessName: template.name ?? '',
-    tagline: footerContent.brand?.tagline ?? '',
-    theme: template.theme ?? null,
+    slug: '',
+    title: 'Home',
+    selectedSections,
+    content,
+  };
+}
+
+function templateSectionsToWizardPage(page) {
+  const sections = page.sections ?? [];
+  return {
+    slug: page.slug ?? '',
+    title: page.title ?? 'Home',
     selectedSections: sections.map((s) => s.type),
     content: Object.fromEntries(
       sections.map((s) => [s.type, s.content ?? {}])
     ),
   };
 }
+
+/**
+ * Accepts v0 (flat `sections`) and v1 (`pages: [...]`) templates.
+ */
+function stateFromTemplate(template) {
+  if (!template) return null;
+
+  const rawPages =
+    Array.isArray(template.pages) && template.pages.length > 0
+      ? template.pages
+      : [
+          {
+            slug: '',
+            title: 'Home',
+            sections: template.sections ?? [],
+          },
+        ];
+
+  const footerContent = template.frames?.footer?.content ?? {};
+
+  return {
+    industryId: template.industryId ?? null,
+    businessName: template.name ?? '',
+    tagline: footerContent.brand?.tagline ?? '',
+    subdomain: template.subdomain ?? '',
+    theme: template.theme ?? null,
+    pages: rawPages.map(templateSectionsToWizardPage),
+    activePageIndex: 0,
+  };
+}
+
+/* ─── Wizard ─── */
 
 export default function Wizard({
   onPublish,
@@ -188,9 +194,10 @@ export default function Wizard({
       industryId: null,
       businessName: '',
       tagline: '',
+      subdomain: '',
       theme: null,
-      selectedSections: [],
-      content: {},
+      pages: [makeHomePage()],
+      activePageIndex: 0,
     };
   });
 
@@ -200,33 +207,43 @@ export default function Wizard({
   const back = () => setStep((s) => Math.max(1, s - 1));
   const update = (patch) => setState((s) => ({ ...s, ...patch }));
 
+  const updatePages = (pages) => setState((s) => ({ ...s, pages }));
+
   const buildTemplate = () => {
     if (!industry) return null;
 
-    const sections = state.selectedSections.map((type) => {
-      const placeholder = industry.placeholder[type] ?? {};
-      const userEdits = state.content[type] ?? {};
-      const merged = { ...placeholder, ...userEdits };
+    const pages = state.pages.map((page) => ({
+      slug: page.slug ?? '',
+      title: page.title || 'Untitled',
+      sections: page.selectedSections.map((type) => {
+        const placeholder = industry.placeholder[type] ?? {};
+        const userEdits = page.content[type] ?? {};
+        const merged = { ...placeholder, ...userEdits };
 
-      if (type === 'hero') {
-        if (state.businessName && !userEdits.heading) merged.heading = state.businessName;
-        if (state.tagline && !userEdits.subheading) merged.subheading = state.tagline;
-      }
+        if (type === 'hero') {
+          if (state.businessName && !userEdits.heading)
+            merged.heading = state.businessName;
+          if (state.tagline && !userEdits.subheading)
+            merged.subheading = state.tagline;
+        }
 
-      return {
-        id: type === 'hero' ? 'top' : type,
-        type,
-        layout: layoutFor(industry, type),
-        style: 'default',
-        density: type === 'hero' ? 'lg' : 'md',
-        content: merged,
-      };
-    });
+        return {
+          id: type === 'hero' ? 'top' : type,
+          type,
+          layout: layoutFor(industry, type),
+          style: 'default',
+          density: type === 'hero' ? 'none' : 'md',
+          content: merged,
+        };
+      }),
+    }));
 
     return {
       id: templateId ?? `site-${Date.now()}`,
-      industryId: state.industryId,        // ← FIX: required by Site model
+      templateVersion: TEMPLATE_VERSION,
+      industryId: state.industryId,
       name: state.businessName || 'Untitled Site',
+      subdomain: state.subdomain || undefined,
       theme: state.theme || industry.theme,
       frames: {
         navbar: {
@@ -238,14 +255,14 @@ export default function Wizard({
             brand: {
               type: 'text',
               value: state.businessName || 'Your Business',
-              href: '#top',
+              href: '/',
             },
-            links: buildNavLinks(state.selectedSections),
+            links: buildNavLinks(state.pages),
             actions: [
               {
                 type: 'button',
                 label: navCtaLabel(state.industryId),
-                href: '#contact',
+                href: navCtaHref(state.pages),
                 variant: 'primary',
               },
             ],
@@ -253,7 +270,7 @@ export default function Wizard({
         },
         footer: buildFooter(state, industry),
       },
-      sections,
+      pages,
     };
   };
 
@@ -271,8 +288,10 @@ export default function Wizard({
               update({
                 industryId: id,
                 theme: ind.theme,
-                selectedSections: [...ind.compulsory, ...ind.recommended],
-                content: {},
+                pages: [
+                  makeHomePage([...ind.compulsory, ...ind.recommended]),
+                ],
+                activePageIndex: 0,
               });
             }}
             onNext={next}
@@ -281,7 +300,11 @@ export default function Wizard({
 
         {step === 2 && (
           <Step2Business
-            value={{ businessName: state.businessName, tagline: state.tagline }}
+            value={{
+              businessName: state.businessName,
+              tagline: state.tagline,
+              subdomain: state.subdomain ?? '',
+            }}
             onChange={update}
             onNext={next}
             onBack={back}
@@ -303,8 +326,10 @@ export default function Wizard({
         {step === 4 && (
           <Step3Sections
             industry={industry}
-            selected={state.selectedSections}
-            onChange={(selectedSections) => update({ selectedSections })}
+            pages={state.pages}
+            activePageIndex={state.activePageIndex}
+            onPagesChange={updatePages}
+            onActivePageChange={(i) => update({ activePageIndex: i })}
             onNext={next}
             onBack={back}
           />
@@ -313,9 +338,10 @@ export default function Wizard({
         {step === 5 && (
           <Step4Content
             industry={industry}
-            selectedSections={state.selectedSections}
-            content={state.content}
-            onChange={(content) => update({ content })}
+            pages={state.pages}
+            activePageIndex={state.activePageIndex}
+            onPagesChange={updatePages}
+            onActivePageChange={(i) => update({ activePageIndex: i })}
             onBack={back}
             editMode={editMode}
             onPublish={() => onPublish?.(buildTemplate())}

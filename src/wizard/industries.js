@@ -19,11 +19,11 @@ export const industries = {
     description: 'Menu, gallery, reviews, and reservations',
 
     compulsory: ['hero'],
-    recommended: ['features', 'gallery', 'testimonials', 'contact','about'],
+    recommended: ['features', 'gallery', 'testimonials', 'contact', 'about'],
     optional: ['stats', 'team', 'pricing', 'cta'],
 
     layout: {
-      hero: 'split',
+      hero: 'bg-slideshow',
       about: 'split',
       features: 'grid',
       gallery: 'masonry',
@@ -43,6 +43,16 @@ export const industries = {
         primaryCta: { label: 'Reserve a table', href: '#reserve' },
         secondaryCta: { label: 'View menu', href: '#menu' },
         image: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=1200&h=900&fit=crop',
+        slideshow: {
+          images: [
+            { src: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=2000&h=1200&fit=crop', alt: 'Restaurant' },
+            { src: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=2000&h=1200&fit=crop', alt: 'Interior' },
+            { src: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=2000&h=1200&fit=crop', alt: 'Food' },
+            { src: 'https://images.unsplash.com/photo-1481833761820-0509d3217039?w=2000&h=1200&fit=crop', alt: 'Wine' },
+          ],
+          interval: 2000,
+          fadeDuration: 1000,
+        },
       },
       features: {
         eyebrow: 'Our menu',
@@ -139,7 +149,7 @@ export const industries = {
     description: 'Services, gallery, reviews, and booking',
 
     compulsory: ['hero'],
-    recommended: ['features', 'gallery', 'testimonials', 'contact','about'],
+    recommended: ['features', 'gallery', 'testimonials', 'contact', 'about'],
     optional: ['stats', 'team', 'pricing', 'cta'],
 
     layout: {
@@ -261,7 +271,7 @@ export const industries = {
     description: 'Services, projects, stats, and quotes',
 
     compulsory: ['hero'],
-    recommended: ['features', 'stats', 'gallery', 'testimonials', 'contact','about'],
+    recommended: ['features', 'stats', 'gallery', 'testimonials', 'contact', 'about'],
     optional: ['team', 'pricing', 'cta'],
 
     layout: {
@@ -380,7 +390,7 @@ export const industries = {
     description: 'Services, pricing, reviews, and contact',
 
     compulsory: ['hero'],
-    recommended: ['features', 'pricing', 'testimonials', 'contact','about'],
+    recommended: ['features', 'pricing', 'testimonials', 'contact', 'about'],
     optional: ['stats', 'team', 'gallery', 'cta'],
 
     layout: {
@@ -498,13 +508,13 @@ export const industries = {
     description: 'Gallery-first with booking',
 
     compulsory: ['hero'],
-    recommended: ['about','gallery', 'testimonials', 'cta', 'contact'],
+    recommended: ['about', 'gallery', 'testimonials', 'cta', 'contact'],
     optional: ['features', 'stats', 'team', 'pricing'],
 
     layout: {
       hero: 'bg-image',
       gallery: 'featured',
-      about: 'centered',  
+      about: 'centered',
       testimonials: 'wall',
       cta: 'centered',
       contact: 'info-only',
@@ -597,12 +607,12 @@ export const industries = {
           'Based in New York, available worldwide.',
         ],
         image: 'https://images.unsplash.com/photo-1554048612-b6a482bc67e5?w=1200&h=900&fit=crop',
-        facts: [  
+        facts: [
           { value: '2014', label: 'Started' },
           { value: '200+', label: 'Weddings' },
           { value: '10+', label: 'Countries' },
           { value: '4.9★', label: 'Rating' },
-          ],
+        ],
       },
     },
   },

@@ -1,5 +1,6 @@
 /* src/app/globals.css */
 @import "../wizard/wizard.css";
+
 /* ── Minimal reset ── */
 *,
 *::before,
@@ -24,9 +25,24 @@ body {
   overflow-wrap: break-word;
 }
 
-/* ── Section density ── */
-/* Desktop section density */
+/* ── Anchor scrolling ── */
+html {
+  scroll-behavior: smooth;
+}
+
+section[id] {
+  scroll-margin-top: 80px;
+}
+
+/* ═══════════════════════════════════════════
+   SECTION DENSITY
+   ═══════════════════════════════════════════ */
+
 @media (min-width: 768px) {
+  .wm-section[data-density="none"] {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
   .wm-section[data-density="sm"] {
     padding-top: 96px;
     padding-bottom: 96px;
@@ -41,7 +57,11 @@ body {
   }
 }
 
-/* ── Hero: centered ── */
+/* ═══════════════════════════════════════════
+   HERO
+   ═══════════════════════════════════════════ */
+
+/* Hero: centered */
 .wm-hero-centered {
   display: flex;
   align-items: center;
@@ -56,21 +76,38 @@ body {
   }
 }
 
-/* ── Hero: background image ── */
+/* Hero: split — vertical presence */
+.wm-hero-split {
+  padding: var(--space-12) 0;
+}
+
+@media (min-width: 768px) {
+  .wm-hero-split {
+    padding: 0;
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+  }
+}
+
+/* Hero: background image + slideshow */
 .wm-hero-bg {
-  display: grid;
-  place-items: center;
+  position: relative;
+  overflow: hidden;
+  min-height: 85vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: var(--space-16) 0;
 }
 
 @media (min-width: 768px) {
   .wm-hero-bg {
-    min-height: 80vh;
     padding: 0;
   }
 }
 
-/* ── Hero: CTA button group — stacks on mobile ── */
+/* Hero: CTA button group — stacks on mobile */
 .wm-hero-cta {
   display: flex;
   flex-direction: column;
@@ -91,7 +128,27 @@ body {
   }
 }
 
-/* ── Gallery masonry — responsive columns ── */
+/* ═══════════════════════════════════════════
+   ABOUT
+   ═══════════════════════════════════════════ */
+
+.wm-about-split {
+  padding: var(--space-12) 0;
+}
+
+@media (min-width: 768px) {
+  .wm-about-split {
+    padding: 0;
+    min-height: 50vh;
+    display: flex;
+    align-items: center;
+  }
+}
+
+/* ═══════════════════════════════════════════
+   GALLERY
+   ═══════════════════════════════════════════ */
+
 @media (min-width: 768px) {
   .wm-masonry {
     column-count: 3 !important;
@@ -100,40 +157,6 @@ body {
 @media (min-width: 1024px) {
   .wm-masonry {
     column-count: 4 !important;
-  }
-}
-
-
-/* ═══════════════════════════════════════════
-   ANCHOR SCROLLING
-   ═══════════════════════════════════════════ */
-
-html {
-  scroll-behavior: smooth;
-}
-
-section[id] {
-  scroll-margin-top: 80px;
-}
-
-/* ═══════════════════════════════════════════
-   NAVBAR — responsive
-   ═══════════════════════════════════════════ */
-
-.wm-nav-links {
-  display: none;
-}
-
-.wm-nav-mobile-trigger {
-  display: inline-flex;
-}
-
-@media (min-width: 768px) {
-  .wm-nav-links {
-    display: flex !important;
-  }
-  .wm-nav-mobile-trigger {
-    display: none !important;
   }
 }
 
@@ -162,6 +185,10 @@ section[id] {
   line-height: 1;
 }
 
+.wm-nav-actions-desktop {
+  display: none;
+}
+
 @media (min-width: 768px) {
   .wm-nav-links {
     display: flex !important;
@@ -169,19 +196,21 @@ section[id] {
   .wm-nav-mobile-trigger {
     display: none !important;
   }
+  .wm-nav-actions-desktop {
+    display: flex !important;
+  }
 }
 
-/* Drawer */
+/* Mobile drawer */
 .wm-nav-drawer {
   position: fixed;
   inset: 0;
   top: 72px;
-  z-index: 1400;               /* just above sticky nav */
+  z-index: 1400;
   padding: var(--space-6);
   overflow-y: auto;
   overscroll-behavior: contain;
 }
-
 
 /* ═══════════════════════════════════════════
    IMAGE FIELD
@@ -254,29 +283,6 @@ section[id] {
   border-color: var(--color-brand-primary, #4f46e5);
 }
 
-.image-field-btn.danger {
-  color: var(--color-state-error-text, #b91c1c);
-  border-color: var(--color-state-error-border, #fecaca);
-}
-
-.image-field-btn.danger:hover {
-  background: var(--color-state-error-bg, #fef2f2);
-}
-
-/* About split — vertical presence */
-.wm-about-split {
-  padding: var(--space-12) 0;
-}
-
-@media (min-width: 768px) {
-  .wm-about-split {
-    padding: 0;
-    min-height: 50vh;
-    display: flex;
-    align-items: center;
-  }
-}
-
 .image-field-btn.primary {
   background: var(--color-brand-primary, #4f46e5);
   color: #fff;
@@ -286,6 +292,15 @@ section[id] {
 
 .image-field-btn.primary:hover:not(:disabled) {
   opacity: 0.9;
+}
+
+.image-field-btn.danger {
+  color: var(--color-state-error-text, #b91c1c);
+  border-color: var(--color-state-error-border, #fecaca);
+}
+
+.image-field-btn.danger:hover {
+  background: var(--color-state-error-bg, #fef2f2);
 }
 
 .image-field-btn:disabled {

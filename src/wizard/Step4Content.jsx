@@ -1,7 +1,7 @@
 // src/wizard/Step4Content.jsx
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { SECTION_LABELS } from './industries';
 
 /* ─────────────────────────────────────────────────────────────
@@ -38,8 +38,6 @@ const FIELD_LABELS = {
 const TEXTAREA_KEYS = new Set(['subheading', 'body', 'bio', 'quote', 'description']);
 const NUMBER_KEYS = new Set(['rating', 'monthlyPrice', 'yearlyPrice']);
 const BOOLEAN_KEYS = new Set(['featured']);
-
-// Fields that render as an ImageField
 const IMAGE_KEYS = new Set(['image', 'src', 'avatar']);
 
 const ADD_LABELS = {
@@ -51,16 +49,31 @@ const ADD_LABELS = {
   features: 'feature',
 };
 
+/* ─────────────────────────────────────────────────────────────
+   Step4Content — top-level component
+   ───────────────────────────────────────────────────────────── */
+
 export default function Step4Content({
   industry,
-  selectedSections = [],
-  content,
-  onChange,
+  pages,
+  activePageIndex,
+  onPagesChange,
+  onActivePageChange,
   onBack,
   onPublish,
 }) {
+  const activePage = pages[activePageIndex] ?? pages[0];
+  const selectedSections = activePage?.selectedSections ?? [];
+  const content = activePage?.content ?? {};
+
   const [activeSection, setActiveSection] = useState(selectedSections[0] ?? null);
   const [publishing, setPublishing] = useState(false);
+
+  // Reset active section when switching pages
+  useEffect(() => {
+    setActiveSection(selectedSections[0] ?? null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activePageIndex]);
 
   if (!industry) return null;
 
@@ -79,13 +92,18 @@ export default function Step4Content({
   }
 
   const updateSection = (section, patch) => {
-    onChange({
+    const nextContent = {
       ...content,
       [section]: {
         ...(content[section] ?? {}),
         ...patch,
       },
-    });
+    };
+    onPagesChange(
+      pages.map((p, i) =>
+        i === activePageIndex ? { ...p, content: nextContent } : p
+      )
+    );
   };
 
   const handlePublish = async () => {
@@ -99,6 +117,20 @@ export default function Step4Content({
       <div className="wizard-panel-header">
         <h1>Fill in your content</h1>
         <p>We've pre-filled everything. Edit what you like.</p>
+      </div>
+
+      {/* Page tabs */}
+      <div className="page-tabs">
+        {pages.map((p, i) => (
+          <button
+            key={i}
+            type="button"
+            className={`page-tab-label ${i === activePageIndex ? 'active' : ''}`}
+            onClick={() => onActivePageChange(i)}
+          >
+            {p.title || 'Untitled'}
+          </button>
+        ))}
       </div>
 
       <div className="content-layout">
@@ -117,7 +149,7 @@ export default function Step4Content({
         <div className="content-form">
           {activeSection && (
             <SectionForm
-              key={activeSection}
+              key={`${activePageIndex}-${activeSection}`}
               placeholder={industry.placeholder[activeSection] ?? {}}
               value={content[activeSection] ?? {}}
               onChange={(patch) => updateSection(activeSection, patch)}
@@ -271,7 +303,6 @@ function ImageField({ fieldKey, value, onChange }) {
       setUploadError('Network error. Try again.');
     } finally {
       setUploading(false);
-      // Reset the input so the same file can be selected again
       if (fileInputRef.current) fileInputRef.current.value = '';
     }
   };
@@ -281,7 +312,6 @@ function ImageField({ fieldKey, value, onChange }) {
       <span className="wizard-field-label">{label}</span>
 
       <div className="image-field-body">
-        {/* Preview */}
         <div className="image-field-preview">
           {uploading ? (
             <div className="image-field-placeholder">⏳</div>
@@ -298,9 +328,7 @@ function ImageField({ fieldKey, value, onChange }) {
           )}
         </div>
 
-        {/* Controls */}
         <div className="image-field-controls">
-          {/* Upload button + hidden input */}
           <input
             ref={fileInputRef}
             type="file"
@@ -333,7 +361,6 @@ function ImageField({ fieldKey, value, onChange }) {
             )}
           </div>
 
-          {/* URL input as an alternative */}
           <input
             className="wizard-input"
             type="url"
@@ -358,6 +385,7 @@ function ImageField({ fieldKey, value, onChange }) {
     </div>
   );
 }
+
 /* ─────────────────────────────────────────────────────────────
    ScalarField
    ───────────────────────────────────────────────────────────── */
@@ -468,8 +496,6 @@ function ArrayField({ fieldKey, items, placeholderItems, onChange }) {
   const addItem = () => {
     const template = items[0] ?? placeholderItems[0];
     if (!template) {
-      // Empty array — create a generic item
-      // For images, use a { src, alt } shape
       if (fieldKey === 'images') {
         onChange([...items, { src: '', alt: '' }]);
       } else {
@@ -477,7 +503,6 @@ function ArrayField({ fieldKey, items, placeholderItems, onChange }) {
       }
       return;
     }
-    // Build a blank copy of the template shape
     const blank = Object.fromEntries(
       Object.entries(template).map(([k, v]) => [k, blankValue(v)])
     );

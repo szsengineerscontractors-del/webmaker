@@ -15,12 +15,38 @@ export const meta = frameMeta(
   ['static', 'sticky', 'transparent-until-scroll']
 );
 
+/**
+ * Turn a stored href into a real URL.
+ *
+ *   routingMode = 'path'      → prefix with /site/{id}
+ *   routingMode = 'subdomain' → root-relative
+ */
+function resolveHref(href, siteId, routingMode) {
+  if (!href || href === '#') return '#';
+  if (href.startsWith('#')) return href;
+  if (href.startsWith('http://') || href.startsWith('https://')) return href;
+  if (href.startsWith('mailto:') || href.startsWith('tel:')) return href;
+  if (href.startsWith('/site/')) return href;
+
+  if (routingMode === 'subdomain') {
+    return href.startsWith('/') ? href : '/' + href;
+  }
+
+  // path mode
+  if (!siteId) return href;
+  if (href === '/') return `/site/${siteId}`;
+  return `/site/${siteId}${href.startsWith('/') ? href : '/' + href}`;
+}
+
 export default function Navbar({
   layout = 'logo-left',
   style: styleKey = 'default',
   behavior = 'sticky',
   content = {},
+  siteId,
+  routingMode = 'path',
 }) {
+  console.log('[Navbar] routingMode:', routingMode, 'siteId:', siteId);
   const s = resolveFrameStyle(styleKey);
   const { brand, links = [], actions = [] } = content;
   const [scrolled, setScrolled] = useState(false);
@@ -46,7 +72,6 @@ export default function Navbar({
 
   return (
     <>
-      {/* Spacer so fixed nav doesn't overlap content */}
       {behavior === 'transparent-until-scroll' && !scrolled && (
         <div style={{ height: '72px' }} aria-hidden="true" />
       )}
@@ -75,17 +100,14 @@ export default function Navbar({
               gap: space(4),
             }}
           >
-            {/* Left: brand */}
-            <Brand brand={brand} color={activeStyle.textPrimary} />
+            <Brand brand={brand} color={activeStyle.textPrimary} siteId={siteId} routingMode={routingMode} />
 
-            {/* Center: desktop nav links */}
             <nav className="wm-nav-links" style={{ color: activeStyle.textPrimary }}>
               {links.map((link, i) => (
-                <NavLink key={i} link={link} color={activeStyle.textPrimary} />
+                <NavLink key={i} link={link} color={activeStyle.textPrimary} siteId={siteId} routingMode={routingMode} />
               ))}
             </nav>
 
-            {/* Right: actions + mobile trigger */}
             <div
               style={{
                 display: 'flex',
@@ -94,20 +116,18 @@ export default function Navbar({
                 justifyContent: 'flex-end',
               }}
             >
-              {/* Desktop action buttons — hidden on mobile via class */}
               <div className="wm-nav-actions-desktop" style={{ display: 'flex', gap: space(2) }}>
                 {actions.map((action, i) => (
                   <Button
                     key={i}
                     label={action.label}
-                    href={action.href}
+                    href={resolveHref(action.href, siteId, routingMode)}
                     variant={action.variant ?? (i === actions.length - 1 ? 'primary' : 'ghost')}
                     size="sm"
                   />
                 ))}
               </div>
 
-              {/* Mobile trigger */}
               <button
                 aria-label="Toggle menu"
                 aria-expanded={mobileOpen}
@@ -122,7 +142,6 @@ export default function Navbar({
         </Container>
       </header>
 
-      {/* Mobile drawer */}
       {mobileOpen && (
         <div
           className="wm-nav-drawer"
@@ -132,7 +151,7 @@ export default function Navbar({
             {links.map((link, i) => (
               <a
                 key={i}
-                href={link.href}
+                href={resolveHref(link.href, siteId, routingMode)}
                 onClick={() => setMobileOpen(false)}
                 style={{
                   fontSize: text('lg'),
@@ -152,7 +171,7 @@ export default function Navbar({
                 <Button
                   key={i}
                   label={action.label}
-                  href={action.href}
+                  href={resolveHref(action.href, siteId, routingMode)}
                   variant={action.variant ?? 'primary'}
                   fullWidth
                 />
@@ -167,12 +186,12 @@ export default function Navbar({
 
 /* ─── Sub-parts ─── */
 
-function Brand({ brand, color: c }) {
+function Brand({ brand, color: c, siteId, routingMode }) {
   if (!brand) return <div />;
   const isLogo = brand.type === 'logo';
   return (
     <a
-      href={brand.href ?? '/'}
+      href={resolveHref(brand.href ?? '/', siteId, routingMode)}
       style={{
         display: 'inline-flex',
         alignItems: 'center',
@@ -193,14 +212,14 @@ function Brand({ brand, color: c }) {
   );
 }
 
-function NavLink({ link, color: c }) {
+function NavLink({ link, color: c, siteId, routingMode }) {
   const [open, setOpen] = useState(false);
   const hasChildren = (link.children ?? []).length > 0;
 
   if (!hasChildren) {
     return (
       <a
-        href={link.href}
+        href={resolveHref(link.href, siteId, routingMode)}
         style={{
           color: c,
           textDecoration: 'none',
@@ -259,7 +278,7 @@ function NavLink({ link, color: c }) {
             {link.children.map((child, i) => (
               <a
                 key={i}
-                href={child.href}
+                href={resolveHref(child.href, siteId, routingMode)}
                 style={{
                   display: 'block',
                   padding: `${space(2)} ${space(3)}`,

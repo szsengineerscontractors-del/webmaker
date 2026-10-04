@@ -2,17 +2,37 @@
 'use client';
 
 import { SECTION_LABELS, SECTION_DESCRIPTIONS } from './industries';
+import { slugify, isReservedSlug } from './Wizard';
 
-export default function Step3Sections({ industry, selected, onChange, onNext, onBack }) {
+const MAX_PAGES = 6;
+
+export default function Step3Sections({
+  industry,
+  pages,
+  activePageIndex,
+  onPagesChange,
+  onActivePageChange,
+  onNext,
+  onBack,
+}) {
   if (!industry) return null;
+
+  const activePage = pages[activePageIndex] ?? pages[0];
+  const selected = activePage?.selectedSections ?? [];
+
+  const updateActivePage = (patch) => {
+    onPagesChange(
+      pages.map((p, i) => (i === activePageIndex ? { ...p, ...patch } : p))
+    );
+  };
 
   const isSelected = (id) => selected.includes(id);
 
   const toggle = (id) => {
     if (isSelected(id)) {
-      onChange(selected.filter((s) => s !== id));
+      updateActivePage({ selectedSections: selected.filter((s) => s !== id) });
     } else {
-      onChange([...selected, id]);
+      updateActivePage({ selectedSections: [...selected, id] });
     }
   };
 
@@ -23,7 +43,46 @@ export default function Step3Sections({ industry, selected, onChange, onNext, on
     if (newIdx < 0 || newIdx >= selected.length) return;
     const next = [...selected];
     [next[idx], next[newIdx]] = [next[newIdx], next[idx]];
-    onChange(next);
+    updateActivePage({ selectedSections: next });
+  };
+
+  const addPage = () => {
+    if (pages.length >= MAX_PAGES) return;
+    const title = `Page ${pages.length + 1}`;
+    onPagesChange([
+      ...pages,
+      {
+        slug: slugify(title),
+        title,
+        selectedSections: [...industry.compulsory],
+        content: {},
+      },
+    ]);
+    onActivePageChange(pages.length);
+  };
+
+  const removePage = (index) => {
+    if (index === 0) return; // can't remove home
+    const next = pages.filter((_, i) => i !== index);
+    onPagesChange(next);
+    if (activePageIndex >= next.length) {
+      onActivePageChange(next.length - 1);
+    } else if (activePageIndex > index) {
+      onActivePageChange(activePageIndex - 1);
+    }
+  };
+
+  const renamePage = (index, title) => {
+    const trimmed = title.trim() || 'Untitled';
+    const autoSlug = slugify(trimmed);
+    const safeSlug = isReservedSlug(autoSlug) ? `${autoSlug}-page` : autoSlug;
+    onPagesChange(
+      pages.map((p, i) =>
+        i === index
+          ? { ...p, title: trimmed, slug: index === 0 ? '' : safeSlug }
+          : p
+      )
+    );
   };
 
   const allOptional = [...industry.recommended, ...industry.optional];
@@ -35,8 +94,56 @@ export default function Step3Sections({ industry, selected, onChange, onNext, on
         <p>Hero is always included. Add or remove the rest.</p>
       </div>
 
+      {/* Page tabs */}
+      <div className="page-tabs">
+        {pages.map((p, i) => (
+          <div
+            key={i}
+            className={`page-tab ${i === activePageIndex ? 'active' : ''}`}
+          >
+            <button
+              type="button"
+              className="page-tab-label"
+              onClick={() => onActivePageChange(i)}
+            >
+              {p.title || 'Untitled'}
+            </button>
+            {i > 0 && (
+              <button
+                type="button"
+                className="page-tab-remove"
+                onClick={() => removePage(i)}
+                aria-label={`Remove ${p.title}`}
+              >
+                ✕
+              </button>
+            )}
+          </div>
+        ))}
+        {pages.length < MAX_PAGES && (
+          <button
+            type="button"
+            className="page-tab-add"
+            onClick={addPage}
+          >
+            + Add page
+          </button>
+        )}
+      </div>
+
+      {activePageIndex > 0 && (
+        <label className="wizard-field">
+          <span className="wizard-field-label">Page name</span>
+          <input
+            className="wizard-input"
+            type="text"
+            value={activePage.title ?? ''}
+            onChange={(e) => renamePage(activePageIndex, e.target.value)}
+          />
+        </label>
+      )}
+
       <div className="section-picker">
-        {/* Compulsory */}
         <div className="section-picker-group">
           <div className="section-picker-group-label">Always included</div>
           {industry.compulsory.map((id) => (
@@ -52,7 +159,6 @@ export default function Step3Sections({ industry, selected, onChange, onNext, on
           ))}
         </div>
 
-        {/* Optional */}
         <div className="section-picker-group">
           <div className="section-picker-group-label">Add to your site</div>
           {allOptional.map((id) => {
@@ -79,7 +185,9 @@ export default function Step3Sections({ industry, selected, onChange, onNext, on
                   )}
                 </div>
                 {recommended && (
-                  <span className="section-picker-badge recommended">Recommended</span>
+                  <span className="section-picker-badge recommended">
+                    Recommended
+                  </span>
                 )}
               </label>
             );

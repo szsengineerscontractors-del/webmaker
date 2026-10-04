@@ -2,6 +2,7 @@
 import { sp } from './tokens';
 
 const DENSITY = {
+  none: { y: 0,  yMd: 0 },
   sm: { y: 12, yMd: 16 },
   md: { y: 16, yMd: 24 },
   lg: { y: 20, yMd: 32 },
@@ -9,7 +10,7 @@ const DENSITY = {
 
 export default function Section({
   density = 'md',
-  background,               // ← new: any valid CSS background value
+  background,
   id,
   as: Tag = 'section',
   className = '',
@@ -18,6 +19,7 @@ export default function Section({
   ...rest
 }) {
   const d = DENSITY[density] ?? DENSITY.md;
+  const isFull = density !== 'none';
 
   return (
     <Tag
@@ -27,7 +29,13 @@ export default function Section({
       style={{
         paddingTop: sp(d.y),
         paddingBottom: sp(d.y),
-        background: background ?? undefined,   // ← apply here
+        ...(isFull && {
+          minHeight: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+        }),
+        background: background ?? undefined,
         ...style,
       }}
       {...rest}
