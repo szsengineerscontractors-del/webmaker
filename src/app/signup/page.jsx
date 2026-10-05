@@ -1,15 +1,14 @@
-// src/app/login/page.jsx
+// src/app/signup/page.jsx
 'use client';
 
 import { useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
-export default function LoginPage() {
+export default function SignupPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const next = searchParams.get('next') || '/dashboard';
 
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -21,20 +20,20 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const res = await fetch('/api/auth/login', {
+      const res = await fetch('/api/auth/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ name, email, password }),
       });
       const data = await res.json();
 
       if (!data.ok) {
-        setError(data.error || 'Login failed.');
+        setError(data.error || 'Signup failed.');
         setLoading(false);
         return;
       }
 
-      router.push(next);
+      router.push('/dashboard');
       router.refresh();
     } catch {
       setError('Network error. Try again.');
@@ -45,10 +44,23 @@ export default function LoginPage() {
   return (
     <div className="login-page">
       <div className="login-card">
-        <h1 className="login-title">Sign in</h1>
-        <p className="login-subtitle">Log in to manage your sites.</p>
+        <h1 className="login-title">Create account</h1>
+        <p className="login-subtitle">Get started with your first site.</p>
 
         <form onSubmit={handleSubmit} className="login-form">
+          <label className="login-field">
+            <span className="login-field-label">Name</span>
+            <input
+              className="login-input"
+              type="text"
+              autoComplete="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+              autoFocus
+            />
+          </label>
+
           <label className="login-field">
             <span className="login-field-label">Email</span>
             <input
@@ -58,7 +70,6 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              autoFocus
             />
           </label>
 
@@ -67,28 +78,25 @@ export default function LoginPage() {
             <input
               className="login-input"
               type="password"
-              autoComplete="current-password"
+              autoComplete="new-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              minLength={6}
             />
           </label>
 
           {error && <div className="login-error">{error}</div>}
 
-          <button
-            type="submit"
-            className="login-btn"
-            disabled={loading}
-          >
-            {loading ? 'Signing in…' : 'Sign in'}
+          <button type="submit" className="login-btn" disabled={loading}>
+            {loading ? 'Creating…' : 'Create account'}
           </button>
         </form>
 
         <p className="login-footer">
-          Don&apos;t have an account?{' '}
-          <Link href="/signup" className="login-link">
-            Create one
+          Already have an account?{' '}
+          <Link href="/login" className="login-link">
+            Sign in
           </Link>
         </p>
       </div>
