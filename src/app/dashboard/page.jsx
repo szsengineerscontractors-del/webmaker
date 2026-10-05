@@ -35,7 +35,7 @@ export default async function Dashboard() {
   const isLocal = process.env.NODE_ENV !== 'production';
   const ROOT_DOMAIN =
     process.env.NEXT_PUBLIC_ROOT_DOMAIN ||
-    (isLocal ? 'localhost:3000' : 'szsdomains.com');
+    (isLocal ? 'localhost:3000' : 'webmaker-gold.vercel.app');
 
   const baseHost = ROOT_DOMAIN;                            // includes port if any
   const baseDisplay = ROOT_DOMAIN.replace(/:\d+$/, '');    // strip port for display
@@ -93,7 +93,8 @@ export default async function Dashboard() {
 
                     {subdomainUrl ? (
                       <a
-                        href={subdomainUrl}
+                        // href={subdomainUrl}
+                        href={`/site/${site._id}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="dash-card-subdomain"
