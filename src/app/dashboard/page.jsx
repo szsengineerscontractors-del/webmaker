@@ -31,9 +31,14 @@ export default async function Dashboard() {
     );
   }
 
+  /* ── Domain config (env-driven, not hardcoded) ── */
   const isLocal = process.env.NODE_ENV !== 'production';
-  const baseHost = isLocal ? 'localhost:3000' : 'szsdomains.com';
-  const baseDisplay = isLocal ? 'localhost' : 'szsdomains.com';
+  const ROOT_DOMAIN =
+    process.env.NEXT_PUBLIC_ROOT_DOMAIN ||
+    (isLocal ? 'localhost:3000' : 'szsdomains.com');
+
+  const baseHost = ROOT_DOMAIN;                            // includes port if any
+  const baseDisplay = ROOT_DOMAIN.replace(/:\d+$/, '');    // strip port for display
   const scheme = isLocal ? 'http' : 'https';
 
   return (
