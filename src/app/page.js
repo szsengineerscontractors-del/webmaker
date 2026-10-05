@@ -44,7 +44,7 @@ export default async function Home() {
       );
     }
 
-    const template = site.template; // already plain JSON
+    const template = site.template;
     const home =
       template.pages?.find((p) => p.slug === '') ??
       template.pages?.[0] ??
@@ -66,9 +66,5 @@ export default async function Home() {
   const user = await getCurrentUser();
   if (user) redirect('/dashboard');
 
-  const SZSDOMAINS = process.env.NEXT_PUBLIC_SZSDOMAINS_URL || 'https://szsdomains.com';
-  const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-  const returnTo = `${APP_URL}/dashboard`;
-
-  redirect(`${SZSDOMAINS}/login?redirect=${encodeURIComponent(returnTo)}`);
+  redirect('/login?next=/dashboard');
 }
