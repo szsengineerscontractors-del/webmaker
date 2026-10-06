@@ -11,12 +11,12 @@ import Step3Theme from './Step3Theme';
 import Step3Sections from './Step3Sections';
 import Step4Content from './Step4Content';
 
-const STEPS = [
+const ALL_STEPS = [
   { id: 1, label: 'Business type' },
   { id: 2, label: 'Your details' },
   { id: 3, label: 'Pick a look' },
-  { id: 4, label: 'Sections' },
-  { id: 5, label: 'Content' },
+  { id: 4, label: 'Sections', editOnly: true },
+  { id: 5, label: 'Content', editOnly: true },
 ];
 
 const TEMPLATE_VERSION = 1;
@@ -30,7 +30,6 @@ const RESERVED_SUBDOMAINS = new Set([
 ]);
 
 /* ─── Slug helpers ─── */
-
 export function slugify(title) {
   return String(title || '')
     .toLowerCase()
@@ -48,12 +47,6 @@ export function isReservedSubdomain(sub) {
 }
 
 /* ─── Navbar helpers ─── */
-
-/**
- * Navbar links = pages. Home → "/", other pages → "/{slug}".
- * resolveHref in the Navbar component turns these into /site/{id}/...
- * at render time.
- */
 function buildNavLinks(pages) {
   return pages.map((page) => ({
     label: page.title || 'Untitled',
@@ -61,10 +54,6 @@ function buildNavLinks(pages) {
   }));
 }
 
-/**
- * CTA points to a contact page if one exists, else falls back to
- * the #contact anchor on the current page.
- */
 function navCtaHref(pages) {
   const contactPage = pages.find((p) => p.slug === 'contact');
   return contactPage ? '/contact' : '#contact';
@@ -86,7 +75,6 @@ function layoutFor(industry, type) {
 }
 
 /* ─── Footer helpers ─── */
-
 function buildFooter(state, industry) {
   const { pages = [], businessName, tagline } = state;
 
@@ -98,7 +86,6 @@ function buildFooter(state, industry) {
     }));
 
   const columns = [];
-
   if (pageLinks.length > 0) {
     columns.push({ heading: 'Explore', links: pageLinks });
   }
@@ -124,14 +111,8 @@ function buildFooter(state, industry) {
 }
 
 /* ─── Template ↔ wizard state ─── */
-
 function makeHomePage(selectedSections = [], content = {}) {
-  return {
-    slug: '',
-    title: 'Home',
-    selectedSections,
-    content,
-  };
+  return { slug: '', title: 'Home', selectedSections, content };
 }
 
 function templateSectionsToWizardPage(page) {
@@ -146,22 +127,13 @@ function templateSectionsToWizardPage(page) {
   };
 }
 
-/**
- * Accepts v0 (flat `sections`) and v1 (`pages: [...]`) templates.
- */
 function stateFromTemplate(template) {
   if (!template) return null;
 
   const rawPages =
     Array.isArray(template.pages) && template.pages.length > 0
       ? template.pages
-      : [
-          {
-            slug: '',
-            title: 'Home',
-            sections: template.sections ?? [],
-          },
-        ];
+      : [{ slug: '', title: 'Home', sections: template.sections ?? [] }];
 
   const footerContent = template.frames?.footer?.content ?? {};
 
@@ -177,7 +149,6 @@ function stateFromTemplate(template) {
 }
 
 /* ─── Wizard ─── */
-
 export default function Wizard({
   onPublish,
   initialState = null,
@@ -203,10 +174,12 @@ export default function Wizard({
 
   const industry = state.industryId ? industries[state.industryId] : null;
 
-  const next = () => setStep((s) => Math.min(5, s + 1));
+  const visibleSteps = ALL_STEPS.filter((s) => !s.editOnly || editMode);
+  const maxStep = editMode ? 5 : 3;
+
+  const next = () => setStep((s) => Math.min(maxStep, s + 1));
   const back = () => setStep((s) => Math.max(1, s - 1));
   const update = (patch) => setState((s) => ({ ...s, ...patch }));
-
   const updatePages = (pages) => setState((s) => ({ ...s, pages }));
 
   const buildTemplate = () => {
@@ -274,9 +247,11 @@ export default function Wizard({
     };
   };
 
+  const handlePublish = () => onPublish?.(buildTemplate());
+
   return (
     <div className="wizard">
-      <StepIndicator steps={STEPS} current={step} />
+      <StepIndicator steps={visibleSteps} current={step} />
 
       <div className="wizard-body">
         {step === 1 && (
@@ -318,12 +293,13 @@ export default function Wizard({
             tagline={state.tagline}
             theme={state.theme}
             onChange={(theme) => update({ theme })}
-            onNext={next}
+            onNext={editMode ? next : handlePublish}
             onBack={back}
+            isLastStep={!editMode}
           />
         )}
 
-        {step === 4 && (
+        {step === 4 && editMode && (
           <Step3Sections
             industry={industry}
             pages={state.pages}
@@ -335,7 +311,7 @@ export default function Wizard({
           />
         )}
 
-        {step === 5 && (
+        {step === 5 && editMode && (
           <Step4Content
             industry={industry}
             pages={state.pages}
@@ -344,7 +320,7 @@ export default function Wizard({
             onActivePageChange={(i) => update({ activePageIndex: i })}
             onBack={back}
             editMode={editMode}
-            onPublish={() => onPublish?.(buildTemplate())}
+            onPublish={handlePublish}
           />
         )}
       </div>

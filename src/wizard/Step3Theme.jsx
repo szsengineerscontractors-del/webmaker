@@ -12,6 +12,7 @@ export default function Step3Theme({
   onChange,
   onNext,
   onBack,
+  isLastStep = false,
 }) {
   if (!industry) return null;
 
@@ -105,7 +106,7 @@ export default function Step3Theme({
       <div className="wizard-actions">
         <button className="wizard-btn ghost" onClick={onBack}>Back</button>
         <button className="wizard-btn primary" disabled={!theme} onClick={onNext}>
-          Continue
+          {isLastStep ? 'Publish site →' : 'Continue'}
         </button>
       </div>
     </div>

@@ -61,6 +61,7 @@ export default function Step4Content({
   onActivePageChange,
   onBack,
   onPublish,
+  editMode = false,
 }) {
   const activePage = pages[activePageIndex] ?? pages[0];
   const selectedSections = activePage?.selectedSections ?? [];
@@ -112,11 +113,14 @@ export default function Step4Content({
     setPublishing(false);
   };
 
+  const publishLabel = editMode ? 'Save changes' : 'Publish site →';
+  const publishingLabel = editMode ? 'Saving...' : 'Publishing...';
+
   return (
     <div className="wizard-panel wizard-panel-wide">
       <div className="wizard-panel-header">
         <h1>Fill in your content</h1>
-        <p>We've pre-filled everything. Edit what you like.</p>
+        <p>We&apos;ve pre-filled everything. Edit what you like.</p>
       </div>
 
       {/* Page tabs */}
@@ -161,7 +165,7 @@ export default function Step4Content({
       <div className="wizard-actions">
         <button className="wizard-btn ghost" onClick={onBack}>Back</button>
         <button className="wizard-btn primary" onClick={handlePublish} disabled={publishing}>
-          {publishing ? 'Publishing...' : 'Publish site →'}
+          {publishing ? publishingLabel : publishLabel}
         </button>
       </div>
     </div>
