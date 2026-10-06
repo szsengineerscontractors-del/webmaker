@@ -481,6 +481,382 @@ export const playfulPop = {
   },
 };
 
+
+/* ─────────────────────────────────────────────────────────────
+   PRESET 6 — Editorial
+   Monochrome, serif headlines, tight spacing. Magazine / publication.
+   ───────────────────────────────────────────────────────────── */
+
+export const editorial = {
+  name: 'Editorial',
+  description: 'Black, white, serif headlines, tight type. Magazine / publication / long-form.',
+
+  fontFamily: {
+    sans:  'Inter, ui-sans-serif, system-ui, sans-serif',
+    serif: 'GT Sectra, "Playfair Display", Georgia, "Times New Roman", serif',
+    mono:  'ui-monospace, monospace',
+  },
+  typeRatio: 1.333,
+
+  typeScale: {
+    xs:'12px', sm:'14px', base:'17px', lg:'19px', xl:'23px',
+    '2xl':'30px', '3xl':'40px', '4xl':'53px', '5xl':'71px', '6xl':'94px',
+  },
+
+  compositeType: {
+    'heading-1': { size:'6xl',  weight:'regular', lineHeight:'tight',  tracking:'tighter' },
+    'heading-2': { size:'5xl',  weight:'regular', lineHeight:'tight',  tracking:'tighter' },
+    'heading-3': { size:'4xl',  weight:'regular', lineHeight:'snug',   tracking:'tight'   },
+    'heading-4': { size:'3xl',  weight:'regular', lineHeight:'snug',   tracking:'tight'   },
+    'heading-5': { size:'2xl',  weight:'medium',  lineHeight:'normal', tracking:'normal'  },
+    'heading-6': { size:'xl',   weight:'medium',  lineHeight:'normal', tracking:'normal'  },
+    'body-lg':   { size:'lg',   weight:'regular', lineHeight:'relaxed',tracking:'normal'  },
+    'body':      { size:'base', weight:'regular', lineHeight:'relaxed',tracking:'normal'  },
+    'body-sm':   { size:'sm',   weight:'regular', lineHeight:'normal', tracking:'normal'  },
+    'caption':   { size:'xs',   weight:'medium',  lineHeight:'normal', tracking:'widest'  },
+    'label':     { size:'sm',   weight:'medium',  lineHeight:'normal', tracking:'wide'    },
+    'code':      { size:'sm',   weight:'regular', lineHeight:'normal', tracking:'normal'  },
+    'quote':     { size:'2xl',  weight:'regular', lineHeight:'relaxed',tracking:'normal'  },
+  },
+
+  radius: {
+    none:'0px', sm:'0px', md:'2px', lg:'4px', xl:'6px', '2xl':'8px', full:'9999px',
+  },
+
+  shadow: {
+    none:'none',
+    xs:  '0 1px 2px rgba(0,0,0,0.04)',
+    sm:  '0 1px 3px rgba(0,0,0,0.06)',
+    md:  '0 4px 8px rgba(0,0,0,0.06)',
+    lg:  '0 8px 16px rgba(0,0,0,0.08)',
+    xl:  '0 16px 28px rgba(0,0,0,0.10)',
+    '2xl':'0 24px 48px rgba(0,0,0,0.12)',
+    inner:'inset 0 1px 2px rgba(0,0,0,0.04)',
+  },
+
+  palette: {
+    gray: {
+      0:'#ffffff', 50:'#fafafa', 100:'#f4f4f5', 200:'#e4e4e7',
+      300:'#d4d4d8', 400:'#a1a1aa', 500:'#71717a', 600:'#52525b',
+      700:'#3f3f46', 800:'#27272a', 900:'#18181b', 1000:'#09090b',
+    },
+    brand: {
+      50:'#f4f4f5', 100:'#e4e4e7', 200:'#d4d4d8', 300:'#a1a1aa',
+      400:'#71717a', 500:'#3f3f46', 600:'#27272a', 700:'#18181b',
+      800:'#0f0f10', 900:'#09090b',
+    },
+    success:{ 50:'#f0fdf4', 500:'#22c55e', 700:'#15803d' },
+    warning:{ 50:'#fffbeb', 500:'#f59e0b', 700:'#b45309' },
+    error:  { 50:'#fef2f2', 500:'#ef4444', 700:'#b91c1c' },
+  },
+
+  semantic: {
+    background: {
+      base:'#ffffff', subtle:'#fafafa', muted:'#f4f4f5',
+      inverse:'#18181b', elevated:'#ffffff',
+    },
+    surface: { 1:'#ffffff', 2:'#fafafa', 3:'#f4f4f5' },
+    text: {
+      primary:'#09090b', secondary:'#3f3f46', muted:'#71717a',
+      disabled:'#a1a1aa', inverse:'#fafafa', link:'#18181b',
+    },
+    border: { default:'#e4e4e7', subtle:'#f4f4f5', strong:'#d4d4d8', focus:'#18181b' },
+    brand:  { primary:'#18181b', secondary:'#3f3f46', accent:'#71717a' },
+    state: {
+      success:{ bg:'#f0fdf4', text:'#15803d', border:'#bbf7d0' },
+      warning:{ bg:'#fffbeb', text:'#b45309', border:'#fde68a' },
+      error:  { bg:'#fef2f2', text:'#b91c1c', border:'#fecaca' },
+      info:   { bg:'#eff6ff', text:'#1d4ed8', border:'#bfdbfe' },
+    },
+    interactive: {
+      hover:'rgba(0,0,0,0.04)', active:'rgba(0,0,0,0.08)',
+      focus:'rgba(24,24,27,0.35)', disabled:'rgba(0,0,0,0.04)',
+    },
+    overlay: { light:'rgba(255,255,255,0.7)', dark:'rgba(0,0,0,0.6)' },
+  },
+};
+
+/* ─────────────────────────────────────────────────────────────
+   PRESET 7 — Luxe
+   Deep navy + gold. Uppercase labels. Premium services.
+   ───────────────────────────────────────────────────────────── */
+
+export const luxe = {
+  name: 'Luxe',
+  description: 'Deep navy, gold accents, refined serif. Premium / luxury / high-end.',
+
+  fontFamily: {
+    sans:  'Inter, ui-sans-serif, system-ui, sans-serif',
+    serif: 'Cormorant Garamond, "Playfair Display", Georgia, serif',
+    mono:  'ui-monospace, monospace',
+  },
+  typeRatio: 1.333,
+
+  typeScale: {
+    xs:'12px', sm:'14px', base:'16px', lg:'18px', xl:'22px',
+    '2xl':'29px', '3xl':'39px', '4xl':'52px', '5xl':'69px', '6xl':'92px',
+  },
+
+  compositeType: {
+    'heading-1': { size:'6xl',  weight:'light',     lineHeight:'tight',  tracking:'wide'    },
+    'heading-2': { size:'5xl',  weight:'light',     lineHeight:'tight',  tracking:'wide'    },
+    'heading-3': { size:'4xl',  weight:'regular',   lineHeight:'snug',   tracking:'wide'    },
+    'heading-4': { size:'3xl',  weight:'medium',    lineHeight:'snug',   tracking:'normal'  },
+    'heading-5': { size:'2xl',  weight:'medium',    lineHeight:'normal', tracking:'normal'  },
+    'heading-6': { size:'xl',   weight:'medium',    lineHeight:'normal', tracking:'normal'  },
+    'body-lg':   { size:'lg',   weight:'regular',   lineHeight:'relaxed',tracking:'normal'  },
+    'body':      { size:'base', weight:'regular',   lineHeight:'relaxed',tracking:'normal'  },
+    'body-sm':   { size:'sm',   weight:'regular',   lineHeight:'normal', tracking:'normal'  },
+    'caption':   { size:'xs',   weight:'medium',    lineHeight:'normal', tracking:'widest'  },
+    'label':     { size:'sm',   weight:'medium',    lineHeight:'normal', tracking:'widest'  },
+    'code':      { size:'sm',   weight:'regular',   lineHeight:'normal', tracking:'normal'  },
+    'quote':     { size:'2xl',  weight:'light',     lineHeight:'relaxed',tracking:'normal'  },
+  },
+
+  radius: {
+    none:'0px', sm:'0px', md:'0px', lg:'2px', xl:'4px', '2xl':'6px', full:'9999px',
+  },
+
+  shadow: {
+    none:'none',
+    xs:  '0 1px 2px rgba(10,15,26,0.15)',
+    sm:  '0 2px 4px rgba(10,15,26,0.2)',
+    md:  '0 6px 12px rgba(10,15,26,0.25)',
+    lg:  '0 14px 24px rgba(10,15,26,0.3)',
+    xl:  '0 24px 40px rgba(10,15,26,0.35)',
+    '2xl':'0 32px 64px rgba(10,15,26,0.4)',
+    inner:'inset 0 1px 2px rgba(10,15,26,0.2)',
+  },
+
+  palette: {
+    gray: {
+      0:'#ffffff', 50:'#f8f9fb', 100:'#eef1f5', 200:'#dde3ea',
+      300:'#c1cad6', 400:'#98a4b5', 500:'#707e92', 600:'#525d70',
+      700:'#3d4658', 800:'#2a3242', 900:'#1a202c', 1000:'#0a0f1a',
+    },
+    brand: {
+      50:'#fbf7ee', 100:'#f5ecd3', 200:'#ecd7a1', 300:'#dfbd6b',
+      400:'#cfa344', 500:'#b88a2c', 600:'#9a6f1f', 700:'#7a561b',
+      800:'#5c421a', 900:'#3f2f16',
+    },
+    success:{ 50:'#f0fdf4', 500:'#22c55e', 700:'#15803d' },
+    warning:{ 50:'#fffbeb', 500:'#f59e0b', 700:'#b45309' },
+    error:  { 50:'#fef2f2', 500:'#ef4444', 700:'#b91c1c' },
+  },
+
+  semantic: {
+    background: {
+      base:'#0a0f1a', subtle:'#1a202c', muted:'#2a3242',
+      inverse:'#f8f9fb', elevated:'#1a202c',
+    },
+    surface: { 1:'#1a202c', 2:'#2a3242', 3:'#3d4658' },
+    text: {
+      primary:'#f8f9fb', secondary:'#c1cad6', muted:'#98a4b5',
+      disabled:'#525d70', inverse:'#0a0f1a', link:'#dfbd6b',
+    },
+    border: { default:'#2a3242', subtle:'#1a202c', strong:'#3d4658', focus:'#cfa344' },
+    brand:  { primary:'#cfa344', secondary:'#dfbd6b', accent:'#ecd7a1' },
+    state: {
+      success:{ bg:'#052e16', text:'#86efac', border:'#166534' },
+      warning:{ bg:'#451a03', text:'#fcd34d', border:'#92400e' },
+      error:  { bg:'#450a0a', text:'#fca5a5', border:'#991b1b' },
+      info:   { bg:'#082f49', text:'#7dd3fc', border:'#075985' },
+    },
+    interactive: {
+      hover:'rgba(255,255,255,0.06)', active:'rgba(255,255,255,0.12)',
+      focus:'rgba(207,163,68,0.45)', disabled:'rgba(255,255,255,0.04)',
+    },
+    overlay: { light:'rgba(255,255,255,0.1)', dark:'rgba(0,0,0,0.7)' },
+  },
+};
+
+/* ─────────────────────────────────────────────────────────────
+   PRESET 8 — Brutalist
+   Pure black + yellow, monospace, zero radius. Portfolio / studio.
+   ───────────────────────────────────────────────────────────── */
+
+export const brutalist = {
+  name: 'Brutalist',
+  description: 'Black, white, yellow, mono, no radius. Studio / portfolio / creative.',
+
+  fontFamily: {
+    sans:  'Inter, ui-sans-serif, system-ui, sans-serif',
+    serif: 'ui-serif, Georgia, serif',
+    mono:  '"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace',
+  },
+  typeRatio: 1.5,
+
+  typeScale: {
+    xs:'12px', sm:'14px', base:'16px', lg:'18px', xl:'21px',
+    '2xl':'28px', '3xl':'42px', '4xl':'60px', '5xl':'84px', '6xl':'112px',
+  },
+
+  compositeType: {
+    'heading-1': { size:'6xl',  weight:'black',    lineHeight:'none',  tracking:'tighter' },
+    'heading-2': { size:'5xl',  weight:'black',    lineHeight:'tight', tracking:'tighter' },
+    'heading-3': { size:'4xl',  weight:'extrabold',lineHeight:'tight', tracking:'tighter' },
+    'heading-4': { size:'3xl',  weight:'bold',     lineHeight:'tight', tracking:'tight'   },
+    'heading-5': { size:'2xl',  weight:'bold',     lineHeight:'snug',  tracking:'normal'  },
+    'heading-6': { size:'xl',   weight:'bold',     lineHeight:'snug',  tracking:'normal'  },
+    'body-lg':   { size:'lg',   weight:'regular',  lineHeight:'normal',tracking:'normal'  },
+    'body':      { size:'base', weight:'regular',  lineHeight:'normal',tracking:'normal'  },
+    'body-sm':   { size:'sm',   weight:'regular',  lineHeight:'normal',tracking:'normal'  },
+    'caption':   { size:'xs',   weight:'bold',     lineHeight:'normal',tracking:'widest'  },
+    'label':     { size:'sm',   weight:'bold',     lineHeight:'normal',tracking:'wide'    },
+    'code':      { size:'sm',   weight:'regular',  lineHeight:'normal',tracking:'normal'  },
+    'quote':     { size:'2xl',  weight:'bold',     lineHeight:'tight', tracking:'tight'   },
+  },
+
+  radius: {
+    none:'0px', sm:'0px', md:'0px', lg:'0px', xl:'0px', '2xl':'0px', full:'0px',
+  },
+
+  shadow: {
+    none:'none',
+    xs:  '2px 2px 0 rgba(0,0,0,1)',
+    sm:  '3px 3px 0 rgba(0,0,0,1)',
+    md:  '4px 4px 0 rgba(0,0,0,1)',
+    lg:  '6px 6px 0 rgba(0,0,0,1)',
+    xl:  '8px 8px 0 rgba(0,0,0,1)',
+    '2xl':'12px 12px 0 rgba(0,0,0,1)',
+    inner:'inset 2px 2px 0 rgba(0,0,0,1)',
+  },
+
+  palette: {
+    gray: {
+      0:'#ffffff', 50:'#fafafa', 100:'#f4f4f5', 200:'#e4e4e7',
+      300:'#d4d4d8', 400:'#a1a1aa', 500:'#71717a', 600:'#52525b',
+      700:'#3f3f46', 800:'#27272a', 900:'#18181b', 1000:'#000000',
+    },
+    brand: {
+      50:'#fefce8', 100:'#fef9c3', 200:'#fef08a', 300:'#fde047',
+      400:'#facc15', 500:'#eab308', 600:'#ca8a04', 700:'#a16207',
+      800:'#854d0e', 900:'#713f12',
+    },
+    success:{ 50:'#f0fdf4', 500:'#22c55e', 700:'#15803d' },
+    warning:{ 50:'#fffbeb', 500:'#f59e0b', 700:'#b45309' },
+    error:  { 50:'#fef2f2', 500:'#ef4444', 700:'#b91c1c' },
+  },
+
+  semantic: {
+    background: {
+      base:'#ffffff', subtle:'#fafafa', muted:'#f4f4f5',
+      inverse:'#000000', elevated:'#ffffff',
+    },
+    surface: { 1:'#ffffff', 2:'#f4f4f5', 3:'#e4e4e7' },
+    text: {
+      primary:'#000000', secondary:'#3f3f46', muted:'#71717a',
+      disabled:'#a1a1aa', inverse:'#ffffff', link:'#000000',
+    },
+    border: { default:'#000000', subtle:'#e4e4e7', strong:'#000000', focus:'#eab308' },
+    brand:  { primary:'#facc15', secondary:'#fde047', accent:'#fef08a' },
+    state: {
+      success:{ bg:'#f0fdf4', text:'#15803d', border:'#15803d' },
+      warning:{ bg:'#fffbeb', text:'#b45309', border:'#b45309' },
+      error:  { bg:'#fef2f2', text:'#b91c1c', border:'#b91c1c' },
+      info:   { bg:'#eff6ff', text:'#1d4ed8', border:'#1d4ed8' },
+    },
+    interactive: {
+      hover:'rgba(0,0,0,0.06)', active:'rgba(0,0,0,0.12)',
+      focus:'rgba(234,179,8,0.5)', disabled:'rgba(0,0,0,0.04)',
+    },
+    overlay: { light:'rgba(255,255,255,0.7)', dark:'rgba(0,0,0,0.8)' },
+  },
+};
+
+/* ─────────────────────────────────────────────────────────────
+   PRESET 9 — Nature
+   Deep green + cream, soft radius, warm. Wellness / sustainable.
+   ───────────────────────────────────────────────────────────── */
+
+export const nature = {
+  name: 'Nature',
+  description: 'Deep green, cream, soft warm. Wellness / sustainable / organic.',
+
+  fontFamily: {
+    sans:  'Inter, ui-sans-serif, system-ui, sans-serif',
+    serif: 'Lora, Georgia, "Times New Roman", serif',
+    mono:  'ui-monospace, monospace',
+  },
+  typeRatio: 1.25,
+
+  typeScale: {
+    xs:'12px', sm:'14px', base:'16px', lg:'18px', xl:'20px',
+    '2xl':'25px', '3xl':'31px', '4xl':'39px', '5xl':'49px', '6xl':'61px',
+  },
+
+  compositeType: {
+    'heading-1': { size:'5xl',  weight:'medium',   lineHeight:'tight',  tracking:'tight'   },
+    'heading-2': { size:'4xl',  weight:'medium',   lineHeight:'tight',  tracking:'tight'   },
+    'heading-3': { size:'3xl',  weight:'medium',   lineHeight:'snug',   tracking:'normal'  },
+    'heading-4': { size:'2xl',  weight:'semibold', lineHeight:'snug',   tracking:'normal'  },
+    'heading-5': { size:'xl',   weight:'semibold', lineHeight:'normal', tracking:'normal'  },
+    'heading-6': { size:'lg',   weight:'semibold', lineHeight:'normal', tracking:'normal'  },
+    'body-lg':   { size:'lg',   weight:'regular',  lineHeight:'relaxed',tracking:'normal'  },
+    'body':      { size:'base', weight:'regular',  lineHeight:'relaxed',tracking:'normal'  },
+    'body-sm':   { size:'sm',   weight:'regular',  lineHeight:'normal', tracking:'normal'  },
+    'caption':   { size:'xs',   weight:'medium',   lineHeight:'normal', tracking:'wide'    },
+    'label':     { size:'sm',   weight:'medium',   lineHeight:'normal', tracking:'normal'  },
+    'code':      { size:'sm',   weight:'regular',  lineHeight:'normal', tracking:'normal'  },
+    'quote':     { size:'xl',   weight:'regular',  lineHeight:'relaxed',tracking:'normal'  },
+  },
+
+  radius: {
+    none:'0px', sm:'4px', md:'8px', lg:'14px', xl:'20px', '2xl':'28px', full:'9999px',
+  },
+
+  shadow: {
+    none:'none',
+    xs:  '0 1px 2px rgba(20,40,30,0.06)',
+    sm:  '0 2px 4px rgba(20,40,30,0.08)',
+    md:  '0 4px 10px rgba(20,40,30,0.10)',
+    lg:  '0 12px 20px rgba(20,40,30,0.12)',
+    xl:  '0 20px 32px rgba(20,40,30,0.14)',
+    '2xl':'0 28px 48px rgba(20,40,30,0.16)',
+    inner:'inset 0 2px 4px rgba(20,40,30,0.06)',
+  },
+
+  palette: {
+    gray: {
+      0:'#ffffff', 50:'#f7f8f5', 100:'#eef1ea', 200:'#dde3d4',
+      300:'#c2cdb3', 400:'#9dac89', 500:'#788961', 600:'#5a6b48',
+      700:'#425037', 800:'#2b3a25', 900:'#1a2416', 1000:'#0d130b',
+    },
+    brand: {
+      50:'#f0f7f2', 100:'#dcebe0', 200:'#b9d7c1', 300:'#8dbc98',
+      400:'#5f9e6f', 500:'#3d8251', 600:'#2b6b3d', 700:'#1f5230',
+      800:'#164025', 900:'#0f2c1a',
+    },
+    success:{ 50:'#f0fdf4', 500:'#22c55e', 700:'#15803d' },
+    warning:{ 50:'#fffbeb', 500:'#f59e0b', 700:'#b45309' },
+    error:  { 50:'#fef2f2', 500:'#ef4444', 700:'#b91c1c' },
+  },
+
+  semantic: {
+    background: {
+      base:'#f7f8f5', subtle:'#eef1ea', muted:'#dde3d4',
+      inverse:'#1a2416', elevated:'#ffffff',
+    },
+    surface: { 1:'#ffffff', 2:'#f7f8f5', 3:'#eef1ea' },
+    text: {
+      primary:'#1a2416', secondary:'#425037', muted:'#5a6b48',
+      disabled:'#9dac89', inverse:'#f7f8f5', link:'#2b6b3d',
+    },
+    border: { default:'#dde3d4', subtle:'#eef1ea', strong:'#c2cdb3', focus:'#3d8251' },
+    brand:  { primary:'#2b6b3d', secondary:'#3d8251', accent:'#5f9e6f' },
+    state: {
+      success:{ bg:'#f0fdf4', text:'#15803d', border:'#bbf7d0' },
+      warning:{ bg:'#fffbeb', text:'#b45309', border:'#fde68a' },
+      error:  { bg:'#fef2f2', text:'#b91c1c', border:'#fecaca' },
+      info:   { bg:'#eff6ff', text:'#1d4ed8', border:'#bfdbfe' },
+    },
+    interactive: {
+      hover:'rgba(26,36,22,0.04)', active:'rgba(26,36,22,0.08)',
+      focus:'rgba(61,130,81,0.35)', disabled:'rgba(26,36,22,0.04)',
+    },
+    overlay: { light:'rgba(247,248,245,0.7)', dark:'rgba(26,36,22,0.6)' },
+  },
+};
 /* ─────────────────────────────────────────────────────────────
    REGISTRY — import this
    ───────────────────────────────────────────────────────────── */
@@ -491,6 +867,10 @@ export const presets = {
   warmSerif,
   clinicTrust,
   playfulPop,
+  editorial,
+  luxe,
+  brutalist,
+  nature,
 };
 
 export default presets;
