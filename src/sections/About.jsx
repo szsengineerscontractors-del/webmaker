@@ -1,6 +1,7 @@
 // src/sections/About.jsx
 import { Container, Stack, Split, Grid, Inline } from '../structures';
 import { Heading, Text, Image, Button } from '../components';
+import Reveal from '../components/Reveal';
 import { resolveStyle, sectionMeta } from './_shared';
 import { color, space } from '../components/tokens';
 
@@ -23,14 +24,7 @@ export default function About({
   content = {},
 }) {
   const s = resolveStyle(styleKey);
-  const {
-    eyebrow,
-    heading,
-    body,
-    image,
-    facts = [],
-  } = content;
-
+  const { eyebrow, heading, body, image, facts = [] } = content;
   const paragraphs = Array.isArray(body) ? body : [body].filter(Boolean);
 
   return (
@@ -38,15 +32,12 @@ export default function About({
       {layout === 'split' && (
         <AboutSplit s={s} content={content} paragraphs={paragraphs} reverse={false} />
       )}
-
       {layout === 'split-reverse' && (
         <AboutSplit s={s} content={content} paragraphs={paragraphs} reverse={true} />
       )}
-
       {layout === 'centered' && (
         <AboutCentered s={s} content={content} paragraphs={paragraphs} />
       )}
-
       {layout === 'facts' && (
         <AboutFacts s={s} content={content} paragraphs={paragraphs} facts={facts} />
       )}
@@ -61,27 +52,27 @@ function AboutSplit({ s, content, paragraphs, reverse }) {
   return (
     <div className="wm-about-split">
       <Split ratio="1fr 1fr" gap={12} reverse={reverse} collapseBelow="md">
-        <Stack gap={5} justify="center">
-          {eyebrow && (
-            <span style={{
-              fontSize: '12px',
-              fontWeight: 600,
-              letterSpacing: '0.05em',
-              textTransform: 'uppercase',
-              color: color.brandPrimary,
-            }}>
-              {eyebrow}
-            </span>
-          )}
+        <Reveal>
+          <Stack gap={5} justify="center">
+            {eyebrow && (
+              <span style={{
+                fontSize: '12px',
+                fontWeight: 600,
+                letterSpacing: '0.05em',
+                textTransform: 'uppercase',
+                color: color.brandPrimary,
+              }}>
+                {eyebrow}
+              </span>
+            )}
+            <Heading level={2} color={s.textPrimary}>{heading}</Heading>
+            {paragraphs.map((p, i) => (
+              <Text key={i} variant="body-lg" color={s.textSecondary}>{p}</Text>
+            ))}
+          </Stack>
+        </Reveal>
 
-          <Heading level={2} color={s.textPrimary}>{heading}</Heading>
-
-          {paragraphs.map((p, i) => (
-            <Text key={i} variant="body-lg" color={s.textSecondary}>{p}</Text>
-          ))}
-        </Stack>
-
-        <div>
+        <Reveal from={reverse ? 'left' : 'right'} delay={100}>
           {image ? (
             <Image src={image} alt="" aspectRatio="4 / 3" rounded />
           ) : (
@@ -92,7 +83,7 @@ function AboutSplit({ s, content, paragraphs, reverse }) {
               border: `1px solid ${s.border}`,
             }} />
           )}
-        </div>
+        </Reveal>
       </Split>
     </div>
   );
@@ -101,33 +92,8 @@ function AboutSplit({ s, content, paragraphs, reverse }) {
 function AboutCentered({ s, content, paragraphs }) {
   const { eyebrow, heading } = content;
   return (
-    <Stack gap={5} align="center" style={{ textAlign: 'center', maxWidth: '720px', margin: '0 auto' }}>
-      {eyebrow && (
-        <span style={{
-          fontSize: '12px',
-          fontWeight: 600,
-          letterSpacing: '0.05em',
-          textTransform: 'uppercase',
-          color: color.brandPrimary,
-        }}>
-          {eyebrow}
-        </span>
-      )}
-
-      <Heading level={2} color={s.textPrimary}>{heading}</Heading>
-
-      {paragraphs.map((p, i) => (
-        <Text key={i} variant="body-lg" color={s.textSecondary}>{p}</Text>
-      ))}
-    </Stack>
-  );
-}
-
-function AboutFacts({ s, content, paragraphs, facts }) {
-  const { eyebrow, heading } = content;
-  return (
-    <Stack gap={10}>
-      <Stack gap={5} style={{ maxWidth: '720px', margin: '0 auto', textAlign: 'center' }}>
+    <Reveal>
+      <Stack gap={5} align="center" style={{ textAlign: 'center', maxWidth: '720px', margin: '0 auto' }}>
         {eyebrow && (
           <span style={{
             fontSize: '12px',
@@ -139,38 +105,65 @@ function AboutFacts({ s, content, paragraphs, facts }) {
             {eyebrow}
           </span>
         )}
-
         <Heading level={2} color={s.textPrimary}>{heading}</Heading>
-
         {paragraphs.map((p, i) => (
           <Text key={i} variant="body-lg" color={s.textSecondary}>{p}</Text>
         ))}
       </Stack>
+    </Reveal>
+  );
+}
+
+function AboutFacts({ s, content, paragraphs, facts }) {
+  const { eyebrow, heading } = content;
+  return (
+    <Stack gap={10}>
+      <Reveal>
+        <Stack gap={5} style={{ maxWidth: '720px', margin: '0 auto', textAlign: 'center' }}>
+          {eyebrow && (
+            <span style={{
+              fontSize: '12px',
+              fontWeight: 600,
+              letterSpacing: '0.05em',
+              textTransform: 'uppercase',
+              color: color.brandPrimary,
+            }}>
+              {eyebrow}
+            </span>
+          )}
+          <Heading level={2} color={s.textPrimary}>{heading}</Heading>
+          {paragraphs.map((p, i) => (
+            <Text key={i} variant="body-lg" color={s.textSecondary}>{p}</Text>
+          ))}
+        </Stack>
+      </Reveal>
 
       {facts.length > 0 && (
-        <Grid columns={{ base: 2, md: 4 }} gap={6}>
-          {facts.map((fact, i) => (
-            <Stack key={i} gap={2} style={{ textAlign: 'center' }}>
-              <span style={{
-                fontSize: 'var(--text-3xl)',
-                fontWeight: 700,
-                lineHeight: 1,
-                color: color.brandPrimary,
-              }}>
-                {fact.value}
-              </span>
-              <span style={{
-                fontSize: 'var(--text-sm)',
-                fontWeight: 500,
-                color: s.textSecondary,
-                textTransform: 'uppercase',
-                letterSpacing: '0.05em',
-              }}>
-                {fact.label}
-              </span>
-            </Stack>
-          ))}
-        </Grid>
+        <Reveal stagger delay={100}>
+          <Grid columns={{ base: 2, md: 4 }} gap={6}>
+            {facts.map((fact, i) => (
+              <Stack key={i} gap={2} style={{ textAlign: 'center' }}>
+                <span style={{
+                  fontSize: 'var(--text-3xl)',
+                  fontWeight: 700,
+                  lineHeight: 1,
+                  color: color.brandPrimary,
+                }}>
+                  {fact.value}
+                </span>
+                <span style={{
+                  fontSize: 'var(--text-sm)',
+                  fontWeight: 500,
+                  color: s.textSecondary,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                }}>
+                  {fact.label}
+                </span>
+              </Stack>
+            ))}
+          </Grid>
+        </Reveal>
       )}
     </Stack>
   );

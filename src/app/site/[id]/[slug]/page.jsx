@@ -1,26 +1,20 @@
-// src/app/[slug]/page.jsx
-import { headers } from 'next/headers';
+// src/app/site/[id]/[slug]/page.jsx
 import { notFound } from 'next/navigation';
 import connectDB from '@/lib/db';
 import Site from '@/models/Site';
 import ThemeProvider from '@/theme/ThemeProvider';
 import RenderTemplate from '@/renderer/RenderTemplate';
-import { getSiteBySubdomain } from '@/lib/siteCache';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
-export default async function SubdomainSlugPage({ params }) {
-  const { slug } = await params;
-  const h = await headers();
-  const subdomain = h.get('x-tenant-subdomain');
-
-  if (!subdomain) notFound();
-
+export default async function SiteSubPage({ params }) {
+  const { id, slug } = await params;
   await connectDB();
-  const site = await getSiteBySubdomain(Site, subdomain);
+
+  const site = await Site.findById(id).lean();
   if (!site) notFound();
 
-  const template = site.template;
+  const template = JSON.parse(JSON.stringify(site.template));
   const page = template.pages?.find((p) => p.slug === slug);
   if (!page) notFound();
 
@@ -30,8 +24,8 @@ export default async function SubdomainSlugPage({ params }) {
         template={template}
         page={page}
         siteId={String(site._id)}
-        routingMode="subdomain"
+        routingMode="path"
       />
     </ThemeProvider>
   );
-}
+} 

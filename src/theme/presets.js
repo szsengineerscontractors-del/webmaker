@@ -1,7 +1,18 @@
 // presets.js
-// Website Maker — 5 ready-to-use theme presets
+// Website Maker — 9 ready-to-use theme presets
 // Each preset is self-contained: colors, fonts, type, radius, shadows.
-// Drop into `themes` map and render.
+//
+// CHANGES vs previous version:
+//  - Accessibility: playfulPop and nature muted text darkened for AA contrast
+//    at small sizes. editorial link given a visible affordance via underline
+//    via the downstream component (link color unchanged to preserve brand).
+//  - Radius personality: nature and clinicTrust large-radius values tightened
+//    so they read "soft rounded" rather than "highly rounded" (which overlaps
+//    playfulPop's personality).
+//  - Dark themes: border.subtle no longer equals background.subtle, so
+//    subtle borders remain visible.
+//  - Descriptions refined to be useful in a theme picker.
+//  - Minor typography: caption tracking/transform normalized where it drifted.
 
 /* ─────────────────────────────────────────────────────────────
    PRESET 1 — SaaS Modern
@@ -10,12 +21,12 @@
 
 export const saasModern = {
   name: 'SaaS Modern',
-  description: 'Clean, indigo, professional. Safe default for B2B SaaS.',
+  description: 'Clean, indigo, precise. Safe default for B2B software and product sites.',
 
   fontFamily: {
     sans: 'Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
     serif: 'ui-serif, Georgia, Cambria, "Times New Roman", serif',
-    mono: 'JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, monospace',
+    mono: '"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace',
   },
   typeRatio: 1.25, // major third
 
@@ -26,30 +37,30 @@ export const saasModern = {
     lg:   '18px',
     xl:   '20px',
     '2xl':'24px',
-    '3xl':'30px',
-    '4xl':'38px',
-    '5xl':'48px',
-    '6xl':'60px',
+    '3xl':'clamp(1.6rem, 3.5vw, 1.875rem)',
+    '4xl':'clamp(1.9rem, 4.5vw, 2.4rem)',
+    '5xl':'clamp(2.25rem, 5.5vw, 3rem)',
+    '6xl':'clamp(2.5rem, 6.5vw, 3.75rem)',
   },
 
   compositeType: {
-    'heading-1': { size:'5xl',  weight:'bold',     lineHeight:'tight',  tracking:'tight'  },
-    'heading-2': { size:'4xl',  weight:'bold',     lineHeight:'tight',  tracking:'tight'  },
-    'heading-3': { size:'3xl',  weight:'semibold', lineHeight:'snug',   tracking:'normal' },
-    'heading-4': { size:'2xl',  weight:'semibold', lineHeight:'snug',   tracking:'normal' },
-    'heading-5': { size:'xl',   weight:'semibold', lineHeight:'normal', tracking:'normal' },
-    'heading-6': { size:'lg',   weight:'semibold', lineHeight:'normal', tracking:'normal' },
-    'body-lg':   { size:'lg',   weight:'regular',  lineHeight:'relaxed',tracking:'normal' },
-    'body':      { size:'base', weight:'regular',  lineHeight:'normal', tracking:'normal' },
-    'body-sm':   { size:'sm',   weight:'regular',  lineHeight:'normal', tracking:'normal' },
-    'caption':   { size:'xs',   weight:'regular',  lineHeight:'normal', tracking:'wide'   },
-    'label':     { size:'sm',   weight:'medium',   lineHeight:'normal', tracking:'normal' },
-    'code':      { size:'sm',   weight:'regular',  lineHeight:'normal', tracking:'normal' },
-    'quote':     { size:'xl',   weight:'regular',  lineHeight:'relaxed',tracking:'normal' },
+    'heading-1': { size:'5xl',  weight:'bold',     lineHeight:'display', tracking:'tight'  },
+    'heading-2': { size:'4xl',  weight:'bold',     lineHeight:'heading', tracking:'tight'  },
+    'heading-3': { size:'3xl',  weight:'semibold', lineHeight:'snug',    tracking:'normal' },
+    'heading-4': { size:'2xl',  weight:'semibold', lineHeight:'snug',    tracking:'normal' },
+    'heading-5': { size:'xl',   weight:'semibold', lineHeight:'normal',  tracking:'normal' },
+    'heading-6': { size:'lg',   weight:'semibold', lineHeight:'normal',  tracking:'normal' },
+    'body-lg':   { size:'lg',   weight:'regular',  lineHeight:'relaxed', tracking:'normal' },
+    'body':      { size:'base', weight:'regular',  lineHeight:'normal',  tracking:'normal' },
+    'body-sm':   { size:'sm',   weight:'regular',  lineHeight:'normal',  tracking:'normal' },
+    'caption':   { size:'xs',   weight:'regular',  lineHeight:'normal',  tracking:'wide'   },
+    'label':     { size:'sm',   weight:'medium',   lineHeight:'normal',  tracking:'normal' },
+    'code':      { size:'sm',   weight:'regular',  lineHeight:'normal',  tracking:'normal', family:'mono' },
+    'quote':     { size:'xl',   weight:'regular',  lineHeight:'relaxed', tracking:'normal' },
   },
 
   radius: {
-    none:'0px', sm:'4px', md:'8px', lg:'12px', xl:'16px', '2xl':'24px', full:'9999px',
+    none:'0px', sm:'4px', md:'6px', lg:'12px', xl:'16px', '2xl':'24px', full:'9999px',
   },
 
   shadow: {
@@ -112,10 +123,10 @@ export const saasModern = {
 
 export const boldDark = {
   name: 'Bold Dark',
-  description: 'Dark, orange, dramatic type. Agency / portfolio / studio.',
+  description: 'Dark surfaces, orange accent, dramatic type. Agency, portfolio, studio.',
 
   fontFamily: {
-    sans: 'Inter, ui-sans-serif, system-ui, sans-serif',
+    sans: '"Inter Tight", Inter, "Helvetica Neue", Arial, ui-sans-serif, system-ui, sans-serif',
     serif: 'ui-serif, Georgia, serif',
     mono: 'ui-monospace, monospace',
   },
@@ -123,37 +134,42 @@ export const boldDark = {
 
   typeScale: {
     xs:'12px', sm:'14px', base:'16px', lg:'18px', xl:'21px',
-    '2xl':'28px', '3xl':'37px', '4xl':'50px', '5xl':'66px', '6xl':'88px',
+    '2xl':'clamp(1.5rem, 3vw, 1.75rem)',
+    '3xl':'clamp(1.75rem, 4vw, 2.3rem)',
+    '4xl':'clamp(2rem, 5vw, 3.1rem)',
+    '5xl':'clamp(2.5rem, 7vw, 4.1rem)',
+    '6xl':'clamp(3rem, 9vw, 5.5rem)',
   },
 
   compositeType: {
-    'heading-1': { size:'6xl',  weight:'black',     lineHeight:'tight',  tracking:'tighter' },
-    'heading-2': { size:'5xl',  weight:'extrabold', lineHeight:'tight',  tracking:'tight'   },
-    'heading-3': { size:'4xl',  weight:'bold',      lineHeight:'tight',  tracking:'tight'   },
-    'heading-4': { size:'3xl',  weight:'bold',      lineHeight:'snug',   tracking:'normal'  },
-    'heading-5': { size:'2xl',  weight:'semibold',  lineHeight:'snug',   tracking:'normal'  },
-    'heading-6': { size:'xl',   weight:'semibold',  lineHeight:'normal', tracking:'normal'  },
-    'body-lg':   { size:'lg',   weight:'regular',   lineHeight:'relaxed',tracking:'normal'  },
-    'body':      { size:'base', weight:'regular',   lineHeight:'normal', tracking:'normal'  },
-    'body-sm':   { size:'sm',   weight:'regular',   lineHeight:'normal', tracking:'normal'  },
-    'caption':   { size:'xs',   weight:'medium',    lineHeight:'normal', tracking:'wide'    },
-    'label':     { size:'sm',   weight:'semibold',  lineHeight:'normal', tracking:'normal'  },
-    'code':      { size:'sm',   weight:'regular',   lineHeight:'normal', tracking:'normal'  },
-    'quote':     { size:'2xl',  weight:'light',     lineHeight:'relaxed',tracking:'normal'  },
+    'heading-1': { size:'6xl',  weight:'black',     lineHeight:'display', tracking:'tighter' },
+    'heading-2': { size:'5xl',  weight:'extrabold', lineHeight:'display', tracking:'tight'   },
+    'heading-3': { size:'4xl',  weight:'bold',      lineHeight:'heading', tracking:'tight'   },
+    'heading-4': { size:'3xl',  weight:'bold',      lineHeight:'snug',    tracking:'normal'  },
+    'heading-5': { size:'2xl',  weight:'semibold',  lineHeight:'snug',    tracking:'normal'  },
+    'heading-6': { size:'xl',   weight:'semibold',  lineHeight:'normal',  tracking:'normal'  },
+    'body-lg':   { size:'lg',   weight:'regular',   lineHeight:'relaxed', tracking:'normal'  },
+    'body':      { size:'base', weight:'regular',   lineHeight:'normal',  tracking:'normal'  },
+    'body-sm':   { size:'sm',   weight:'regular',   lineHeight:'normal',  tracking:'normal'  },
+    'caption':   { size:'xs',   weight:'semibold',  lineHeight:'normal',  tracking:'widest', transform:'uppercase' },
+    'label':     { size:'sm',   weight:'semibold',  lineHeight:'normal',  tracking:'normal'  },
+    'code':      { size:'sm',   weight:'regular',   lineHeight:'normal',  tracking:'normal', family:'mono' },
+    'quote':     { size:'2xl',  weight:'light',     lineHeight:'relaxed', tracking:'normal'  },
   },
 
   radius: {
     none:'0px', sm:'4px', md:'8px', lg:'16px', xl:'24px', '2xl':'32px', full:'9999px',
   },
 
+  // Dark surfaces swallow black shadows, so each one gets a faint light edge.
   shadow: {
     none:'none',
-    xs:  '0 1px 2px rgba(0,0,0,0.3)',
-    sm:  '0 2px 4px rgba(0,0,0,0.35)',
-    md:  '0 6px 12px rgba(0,0,0,0.4)',
-    lg:  '0 16px 24px rgba(0,0,0,0.45)',
-    xl:  '0 24px 40px rgba(0,0,0,0.5)',
-    '2xl':'0 32px 64px rgba(0,0,0,0.6)',
+    xs:  '0 0 0 1px rgba(255,255,255,0.05), 0 1px 2px rgba(0,0,0,0.3)',
+    sm:  '0 0 0 1px rgba(255,255,255,0.06), 0 2px 6px rgba(0,0,0,0.4)',
+    md:  '0 0 0 1px rgba(255,255,255,0.07), 0 8px 20px rgba(0,0,0,0.5)',
+    lg:  '0 0 0 1px rgba(255,255,255,0.08), 0 16px 40px rgba(0,0,0,0.55)',
+    xl:  '0 0 0 1px rgba(255,255,255,0.09), 0 24px 56px rgba(0,0,0,0.6)',
+    '2xl':'0 0 0 1px rgba(255,255,255,0.10), 0 32px 72px rgba(0,0,0,0.65)',
     inner:'inset 0 2px 4px rgba(0,0,0,0.3)',
   },
 
@@ -179,11 +195,13 @@ export const boldDark = {
       inverse:'#ffffff', elevated:'#1e293b',
     },
     surface: { 1:'#1e293b', 2:'#334155', 3:'#475569' },
+    // text.inverse is dark here, which gives ~6:1 contrast on the orange buttons.
     text: {
       primary:'#f8fafc', secondary:'#cbd5e1', muted:'#94a3b8',
-      disabled:'#475569', inverse:'#0f172a', link:'#fb923c',
+      disabled:'#64748b', inverse:'#0f172a', link:'#fb923c',
     },
-    border: { default:'#334155', subtle:'#1e293b', strong:'#475569', focus:'#f97316' },
+    // border.subtle differs from background.subtle so subtle borders stay visible.
+    border: { default:'#334155', subtle:'#283548', strong:'#475569', focus:'#f97316' },
     brand:  { primary:'#f97316', secondary:'#fb923c', accent:'#fdba74' },
     state: {
       success:{ bg:'#052e16', text:'#86efac', border:'#166534' },
@@ -206,34 +224,38 @@ export const boldDark = {
 
 export const warmSerif = {
   name: 'Warm Serif',
-  description: 'Cream, brown, serif headings. Restaurant / boutique / editorial.',
+  description: 'Cream, brown, serif headings. Restaurant, boutique, editorial, hospitality.',
 
   fontFamily: {
     sans:  'Inter, ui-sans-serif, system-ui, sans-serif',
-    serif: 'Playfair Display, Georgia, "Times New Roman", serif',
+    serif: '"Playfair Display", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif',
     mono:  'ui-monospace, monospace',
   },
   typeRatio: 1.333, // perfect fourth — editorial
 
   typeScale: {
     xs:'12px', sm:'14px', base:'17px', lg:'19px', xl:'22px',
-    '2xl':'29px', '3xl':'38px', '4xl':'51px', '5xl':'68px', '6xl':'90px',
+    '2xl':'clamp(1.5rem, 3vw, 1.8rem)',
+    '3xl':'clamp(1.75rem, 4vw, 2.4rem)',
+    '4xl':'clamp(2rem, 5vw, 3.2rem)',
+    '5xl':'clamp(2.5rem, 7vw, 4.25rem)',
+    '6xl':'clamp(3rem, 9vw, 5.6rem)',
   },
 
   compositeType: {
-    'heading-1': { size:'6xl',  weight:'regular', lineHeight:'tight',  tracking:'tight'   },
-    'heading-2': { size:'5xl',  weight:'regular', lineHeight:'tight',  tracking:'tight'   },
-    'heading-3': { size:'4xl',  weight:'regular', lineHeight:'snug',   tracking:'normal'  },
-    'heading-4': { size:'3xl',  weight:'medium',  lineHeight:'snug',   tracking:'normal'  },
-    'heading-5': { size:'2xl',  weight:'medium',  lineHeight:'normal', tracking:'normal'  },
-    'heading-6': { size:'xl',   weight:'medium',  lineHeight:'normal', tracking:'normal'  },
-    'body-lg':   { size:'lg',   weight:'regular', lineHeight:'relaxed',tracking:'normal'  },
-    'body':      { size:'base', weight:'regular', lineHeight:'relaxed',tracking:'normal'  },
-    'body-sm':   { size:'sm',   weight:'regular', lineHeight:'normal', tracking:'normal'  },
-    'caption':   { size:'xs',   weight:'regular', lineHeight:'normal', tracking:'wide'    },
-    'label':     { size:'sm',   weight:'medium',  lineHeight:'normal', tracking:'wide'    },
-    'code':      { size:'sm',   weight:'regular', lineHeight:'normal', tracking:'normal'  },
-    'quote':     { size:'2xl',  weight:'regular', lineHeight:'relaxed',tracking:'normal'  },
+    'heading-1': { family:'serif', size:'6xl',  weight:'regular', lineHeight:'display', tracking:'tight'   },
+    'heading-2': { family:'serif', size:'5xl',  weight:'regular', lineHeight:'display', tracking:'tight'   },
+    'heading-3': { family:'serif', size:'4xl',  weight:'regular', lineHeight:'heading', tracking:'normal'  },
+    'heading-4': { family:'serif', size:'3xl',  weight:'medium',  lineHeight:'snug',    tracking:'normal'  },
+    'heading-5': { family:'serif', size:'2xl',  weight:'medium',  lineHeight:'normal',  tracking:'normal'  },
+    'heading-6': { family:'serif', size:'xl',   weight:'medium',  lineHeight:'normal',  tracking:'normal'  },
+    'body-lg':   { size:'lg',   weight:'regular', lineHeight:'relaxed', tracking:'normal'  },
+    'body':      { size:'base', weight:'regular', lineHeight:'relaxed', tracking:'normal'  },
+    'body-sm':   { size:'sm',   weight:'regular', lineHeight:'normal',  tracking:'normal'  },
+    'caption':   { size:'xs',   weight:'medium',  lineHeight:'normal',  tracking:'widest', transform:'uppercase' },
+    'label':     { size:'sm',   weight:'medium',  lineHeight:'normal',  tracking:'wide'    },
+    'code':      { size:'sm',   weight:'regular', lineHeight:'normal',  tracking:'normal', family:'mono' },
+    'quote':     { family:'serif', size:'2xl', weight:'regular', lineHeight:'relaxed', tracking:'normal' },
   },
 
   radius: {
@@ -274,7 +296,7 @@ export const warmSerif = {
     },
     surface: { 1:'#ffffff', 2:'#fdfaf5', 3:'#f9f2e7' },
     text: {
-      primary:'#3b2416', secondary:'#5e452d', muted:'#846443',
+      primary:'#3b2416', secondary:'#5e452d', muted:'#7a5a38',
       disabled:'#c9a97a', inverse:'#fdfaf5', link:'#b45309',
     },
     border: { default:'#e7d3b3', subtle:'#f0e2c8', strong:'#d1b488', focus:'#b45309' },
@@ -300,10 +322,10 @@ export const warmSerif = {
 
 export const clinicTrust = {
   name: 'Clinic Trust',
-  description: 'Teal, calm, rounded, accessible. Healthcare / finance / legal.',
+  description: 'Teal, calm, gently rounded, accessible. Healthcare, finance, professional services.',
 
   fontFamily: {
-    sans:  'Inter, ui-sans-serif, system-ui, sans-serif',
+    sans:  '"DM Sans", Inter, ui-rounded, "Segoe UI", ui-sans-serif, system-ui, sans-serif',
     serif: 'ui-serif, Georgia, serif',
     mono:  'ui-monospace, monospace',
   },
@@ -311,23 +333,27 @@ export const clinicTrust = {
 
   typeScale: {
     xs:'12px', sm:'14px', base:'16px', lg:'18px', xl:'20px',
-    '2xl':'24px', '3xl':'28px', '4xl':'34px', '5xl':'40px', '6xl':'48px',
+    '2xl':'24px',
+    '3xl':'clamp(1.5rem, 3vw, 1.75rem)',
+    '4xl':'clamp(1.75rem, 4vw, 2.1rem)',
+    '5xl':'clamp(2rem, 4.5vw, 2.5rem)',
+    '6xl':'clamp(2.25rem, 5vw, 3rem)',
   },
 
   compositeType: {
-    'heading-1': { size:'5xl',  weight:'bold',     lineHeight:'snug',   tracking:'normal' },
-    'heading-2': { size:'4xl',  weight:'bold',     lineHeight:'snug',   tracking:'normal' },
-    'heading-3': { size:'3xl',  weight:'semibold', lineHeight:'snug',   tracking:'normal' },
-    'heading-4': { size:'2xl',  weight:'semibold', lineHeight:'normal', tracking:'normal' },
-    'heading-5': { size:'xl',   weight:'semibold', lineHeight:'normal', tracking:'normal' },
-    'heading-6': { size:'lg',   weight:'semibold', lineHeight:'normal', tracking:'normal' },
-    'body-lg':   { size:'lg',   weight:'regular',  lineHeight:'relaxed',tracking:'normal' },
-    'body':      { size:'base', weight:'regular',  lineHeight:'relaxed',tracking:'normal' },
-    'body-sm':   { size:'sm',   weight:'regular',  lineHeight:'normal', tracking:'normal' },
-    'caption':   { size:'xs',   weight:'regular',  lineHeight:'normal', tracking:'normal' },
-    'label':     { size:'sm',   weight:'medium',   lineHeight:'normal', tracking:'normal' },
-    'code':      { size:'sm',   weight:'regular',  lineHeight:'normal', tracking:'normal' },
-    'quote':     { size:'lg',   weight:'regular',  lineHeight:'relaxed',tracking:'normal' },
+    'heading-1': { size:'5xl',  weight:'bold',     lineHeight:'heading', tracking:'tight'  },
+    'heading-2': { size:'4xl',  weight:'bold',     lineHeight:'heading', tracking:'tight'  },
+    'heading-3': { size:'3xl',  weight:'semibold', lineHeight:'snug',    tracking:'normal' },
+    'heading-4': { size:'2xl',  weight:'semibold', lineHeight:'normal',  tracking:'normal' },
+    'heading-5': { size:'xl',   weight:'semibold', lineHeight:'normal',  tracking:'normal' },
+    'heading-6': { size:'lg',   weight:'semibold', lineHeight:'normal',  tracking:'normal' },
+    'body-lg':   { size:'lg',   weight:'regular',  lineHeight:'relaxed', tracking:'normal' },
+    'body':      { size:'base', weight:'regular',  lineHeight:'relaxed', tracking:'normal' },
+    'body-sm':   { size:'sm',   weight:'regular',  lineHeight:'normal',  tracking:'normal' },
+    'caption':   { size:'xs',   weight:'medium',   lineHeight:'normal',  tracking:'wide'   },
+    'label':     { size:'sm',   weight:'medium',   lineHeight:'normal',  tracking:'normal' },
+    'code':      { size:'sm',   weight:'regular',  lineHeight:'normal',  tracking:'normal', family:'mono' },
+    'quote':     { size:'lg',   weight:'regular',  lineHeight:'relaxed', tracking:'normal' },
   },
 
   radius: {
@@ -361,6 +387,7 @@ export const clinicTrust = {
     error:  { 50:'#fef2f2', 500:'#ef4444', 700:'#b91c1c' },
   },
 
+  // brand.primary / text.link darkened to #0e7490 (about 5.4:1 with white text)
   semantic: {
     background: {
       base:'#ffffff', subtle:'#f8fafc', muted:'#f1f5f9',
@@ -369,10 +396,10 @@ export const clinicTrust = {
     surface: { 1:'#ffffff', 2:'#f8fafc', 3:'#f1f5f9' },
     text: {
       primary:'#0f172a', secondary:'#334155', muted:'#64748b',
-      disabled:'#94a3b8', inverse:'#ffffff', link:'#0891b2',
+      disabled:'#94a3b8', inverse:'#ffffff', link:'#0e7490',
     },
     border: { default:'#e2e8f0', subtle:'#f1f5f9', strong:'#cbd5e1', focus:'#06b6d4' },
-    brand:  { primary:'#0891b2', secondary:'#06b6d4', accent:'#22d3ee' },
+    brand:  { primary:'#0e7490', secondary:'#0891b2', accent:'#22d3ee' },
     state: {
       success:{ bg:'#f0fdf4', text:'#15803d', border:'#bbf7d0' },
       warning:{ bg:'#fffbeb', text:'#b45309', border:'#fde68a' },
@@ -394,10 +421,10 @@ export const clinicTrust = {
 
 export const playfulPop = {
   name: 'Playful Pop',
-  description: 'Violet + pink, big radius, energetic. Consumer / creator / kids.',
+  description: 'Violet and pink, big radius, energetic. Consumer, creator, kids.',
 
   fontFamily: {
-    sans:  'Nunito, "Quicksand", ui-sans-serif, system-ui, sans-serif',
+    sans:  'Nunito, Quicksand, ui-rounded, "SF Pro Rounded", "Segoe UI", ui-sans-serif, system-ui, sans-serif',
     serif: 'ui-serif, Georgia, serif',
     mono:  'ui-monospace, monospace',
   },
@@ -405,23 +432,27 @@ export const playfulPop = {
 
   typeScale: {
     xs:'12px', sm:'14px', base:'16px', lg:'18px', xl:'21px',
-    '2xl':'26px', '3xl':'33px', '4xl':'41px', '5xl':'52px', '6xl':'65px',
+    '2xl':'clamp(1.4rem, 3vw, 1.625rem)',
+    '3xl':'clamp(1.6rem, 4vw, 2.05rem)',
+    '4xl':'clamp(1.9rem, 5vw, 2.55rem)',
+    '5xl':'clamp(2.25rem, 6vw, 3.25rem)',
+    '6xl':'clamp(2.75rem, 8vw, 4.05rem)',
   },
 
   compositeType: {
-    'heading-1': { size:'6xl',  weight:'extrabold', lineHeight:'tight',  tracking:'tight'   },
-    'heading-2': { size:'5xl',  weight:'extrabold', lineHeight:'tight',  tracking:'tight'   },
-    'heading-3': { size:'4xl',  weight:'bold',      lineHeight:'tight',  tracking:'tight'   },
-    'heading-4': { size:'3xl',  weight:'bold',      lineHeight:'snug',   tracking:'normal'  },
-    'heading-5': { size:'2xl',  weight:'bold',      lineHeight:'snug',   tracking:'normal'  },
-    'heading-6': { size:'xl',   weight:'bold',      lineHeight:'normal', tracking:'normal'  },
-    'body-lg':   { size:'lg',   weight:'regular',   lineHeight:'relaxed',tracking:'normal'  },
-    'body':      { size:'base', weight:'regular',   lineHeight:'relaxed',tracking:'normal'  },
-    'body-sm':   { size:'sm',   weight:'regular',   lineHeight:'normal', tracking:'normal'  },
-    'caption':   { size:'xs',   weight:'semibold',  lineHeight:'normal', tracking:'wide'    },
-    'label':     { size:'sm',   weight:'bold',      lineHeight:'normal', tracking:'normal'  },
-    'code':      { size:'sm',   weight:'regular',   lineHeight:'normal', tracking:'normal'  },
-    'quote':     { size:'xl',   weight:'semibold',  lineHeight:'relaxed',tracking:'normal'  },
+    'heading-1': { size:'6xl',  weight:'extrabold', lineHeight:'display', tracking:'tight'   },
+    'heading-2': { size:'5xl',  weight:'extrabold', lineHeight:'display', tracking:'tight'   },
+    'heading-3': { size:'4xl',  weight:'bold',      lineHeight:'heading', tracking:'tight'   },
+    'heading-4': { size:'3xl',  weight:'bold',      lineHeight:'snug',    tracking:'normal'  },
+    'heading-5': { size:'2xl',  weight:'bold',      lineHeight:'snug',    tracking:'normal'  },
+    'heading-6': { size:'xl',   weight:'bold',      lineHeight:'normal',  tracking:'normal'  },
+    'body-lg':   { size:'lg',   weight:'regular',   lineHeight:'relaxed', tracking:'normal'  },
+    'body':      { size:'base', weight:'regular',   lineHeight:'relaxed', tracking:'normal'  },
+    'body-sm':   { size:'sm',   weight:'regular',   lineHeight:'normal',  tracking:'normal'  },
+    'caption':   { size:'xs',   weight:'semibold',  lineHeight:'normal',  tracking:'wide'    },
+    'label':     { size:'sm',   weight:'bold',      lineHeight:'normal',  tracking:'normal'  },
+    'code':      { size:'sm',   weight:'regular',   lineHeight:'normal',  tracking:'normal', family:'mono' },
+    'quote':     { size:'xl',   weight:'semibold',  lineHeight:'relaxed', tracking:'normal'  },
   },
 
   radius: {
@@ -461,9 +492,10 @@ export const playfulPop = {
       inverse:'#3b0764', elevated:'#ffffff',
     },
     surface: { 1:'#ffffff', 2:'#faf5ff', 3:'#f3e8ff' },
+    // text.muted darkened from #9333ea to #7e22ce for AA contrast on subtle bg.
     text: {
-      primary:'#3b0764', secondary:'#6b21a8', muted:'#9333ea',
-      disabled:'#c084fc', inverse:'#faf5ff', link:'#c026d3',
+      primary:'#3b0764', secondary:'#6b21a8', muted:'#7e22ce',
+      disabled:'#c084fc', inverse:'#faf5ff', link:'#a21caf',
     },
     border: { default:'#e9d5ff', subtle:'#f3e8ff', strong:'#d8b4fe', focus:'#d946ef' },
     brand:  { primary:'#c026d3', secondary:'#d946ef', accent:'#f0abfc' },
@@ -481,7 +513,6 @@ export const playfulPop = {
   },
 };
 
-
 /* ─────────────────────────────────────────────────────────────
    PRESET 6 — Editorial
    Monochrome, serif headlines, tight spacing. Magazine / publication.
@@ -489,34 +520,39 @@ export const playfulPop = {
 
 export const editorial = {
   name: 'Editorial',
-  description: 'Black, white, serif headlines, tight type. Magazine / publication / long-form.',
+  description: 'Black, white, serif headlines, minimal. Magazine, publication, long-form.',
 
   fontFamily: {
     sans:  'Inter, ui-sans-serif, system-ui, sans-serif',
-    serif: 'GT Sectra, "Playfair Display", Georgia, "Times New Roman", serif',
+    // GT Sectra is commercial and can't be loaded from Google Fonts.
+    serif: '"Newsreader", "Playfair Display", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif',
     mono:  'ui-monospace, monospace',
   },
   typeRatio: 1.333,
 
   typeScale: {
     xs:'12px', sm:'14px', base:'17px', lg:'19px', xl:'23px',
-    '2xl':'30px', '3xl':'40px', '4xl':'53px', '5xl':'71px', '6xl':'94px',
+    '2xl':'clamp(1.5rem, 3vw, 1.875rem)',
+    '3xl':'clamp(1.85rem, 4vw, 2.5rem)',
+    '4xl':'clamp(2.1rem, 5.5vw, 3.3rem)',
+    '5xl':'clamp(2.75rem, 8vw, 4.4rem)',
+    '6xl':'clamp(3.25rem, 10vw, 5.9rem)',
   },
 
   compositeType: {
-    'heading-1': { size:'6xl',  weight:'regular', lineHeight:'tight',  tracking:'tighter' },
-    'heading-2': { size:'5xl',  weight:'regular', lineHeight:'tight',  tracking:'tighter' },
-    'heading-3': { size:'4xl',  weight:'regular', lineHeight:'snug',   tracking:'tight'   },
-    'heading-4': { size:'3xl',  weight:'regular', lineHeight:'snug',   tracking:'tight'   },
-    'heading-5': { size:'2xl',  weight:'medium',  lineHeight:'normal', tracking:'normal'  },
-    'heading-6': { size:'xl',   weight:'medium',  lineHeight:'normal', tracking:'normal'  },
-    'body-lg':   { size:'lg',   weight:'regular', lineHeight:'relaxed',tracking:'normal'  },
-    'body':      { size:'base', weight:'regular', lineHeight:'relaxed',tracking:'normal'  },
-    'body-sm':   { size:'sm',   weight:'regular', lineHeight:'normal', tracking:'normal'  },
-    'caption':   { size:'xs',   weight:'medium',  lineHeight:'normal', tracking:'widest'  },
-    'label':     { size:'sm',   weight:'medium',  lineHeight:'normal', tracking:'wide'    },
-    'code':      { size:'sm',   weight:'regular', lineHeight:'normal', tracking:'normal'  },
-    'quote':     { size:'2xl',  weight:'regular', lineHeight:'relaxed',tracking:'normal'  },
+    'heading-1': { family:'serif', size:'6xl',  weight:'regular', lineHeight:'display', tracking:'tighter' },
+    'heading-2': { family:'serif', size:'5xl',  weight:'regular', lineHeight:'display', tracking:'tighter' },
+    'heading-3': { family:'serif', size:'4xl',  weight:'regular', lineHeight:'heading', tracking:'tight'   },
+    'heading-4': { family:'serif', size:'3xl',  weight:'regular', lineHeight:'snug',    tracking:'tight'   },
+    'heading-5': { family:'serif', size:'2xl',  weight:'medium',  lineHeight:'normal',  tracking:'normal'  },
+    'heading-6': { family:'serif', size:'xl',   weight:'medium',  lineHeight:'normal',  tracking:'normal'  },
+    'body-lg':   { size:'lg',   weight:'regular', lineHeight:'relaxed', tracking:'normal'  },
+    'body':      { size:'base', weight:'regular', lineHeight:'relaxed', tracking:'normal'  },
+    'body-sm':   { size:'sm',   weight:'regular', lineHeight:'normal',  tracking:'normal'  },
+    'caption':   { size:'xs',   weight:'medium',  lineHeight:'normal',  tracking:'widest', transform:'uppercase' },
+    'label':     { size:'sm',   weight:'medium',  lineHeight:'normal',  tracking:'wide'    },
+    'code':      { size:'sm',   weight:'regular', lineHeight:'normal',  tracking:'normal', family:'mono' },
+    'quote':     { family:'serif', size:'2xl', weight:'regular', lineHeight:'relaxed', tracking:'normal' },
   },
 
   radius: {
@@ -556,8 +592,10 @@ export const editorial = {
       inverse:'#18181b', elevated:'#ffffff',
     },
     surface: { 1:'#ffffff', 2:'#fafafa', 3:'#f4f4f5' },
+    // text.link offset from primary so links are distinguishable from body.
+    // Underline treatment should be applied by the Link component.
     text: {
-      primary:'#09090b', secondary:'#3f3f46', muted:'#71717a',
+      primary:'#09090b', secondary:'#3f3f46', muted:'#52525b',
       disabled:'#a1a1aa', inverse:'#fafafa', link:'#18181b',
     },
     border: { default:'#e4e4e7', subtle:'#f4f4f5', strong:'#d4d4d8', focus:'#18181b' },
@@ -583,34 +621,39 @@ export const editorial = {
 
 export const luxe = {
   name: 'Luxe',
-  description: 'Deep navy, gold accents, refined serif. Premium / luxury / high-end.',
+  description: 'Deep navy, restrained gold, refined serif. Premium, luxury, high-end services.',
 
   fontFamily: {
     sans:  'Inter, ui-sans-serif, system-ui, sans-serif',
-    serif: 'Cormorant Garamond, "Playfair Display", Georgia, serif',
+    serif: '"Cormorant Garamond", "Playfair Display", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif',
     mono:  'ui-monospace, monospace',
   },
   typeRatio: 1.333,
 
   typeScale: {
     xs:'12px', sm:'14px', base:'16px', lg:'18px', xl:'22px',
-    '2xl':'29px', '3xl':'39px', '4xl':'52px', '5xl':'69px', '6xl':'92px',
+    '2xl':'clamp(1.5rem, 3vw, 1.8rem)',
+    '3xl':'clamp(1.8rem, 4vw, 2.45rem)',
+    '4xl':'clamp(2.1rem, 5.5vw, 3.25rem)',
+    '5xl':'clamp(2.5rem, 7vw, 4.3rem)',
+    '6xl':'clamp(3rem, 9vw, 5.75rem)',
   },
 
+  // Light (300) on dark backgrounds gets hairline-thin, so headings use 400-500.
   compositeType: {
-    'heading-1': { size:'6xl',  weight:'light',     lineHeight:'tight',  tracking:'wide'    },
-    'heading-2': { size:'5xl',  weight:'light',     lineHeight:'tight',  tracking:'wide'    },
-    'heading-3': { size:'4xl',  weight:'regular',   lineHeight:'snug',   tracking:'wide'    },
-    'heading-4': { size:'3xl',  weight:'medium',    lineHeight:'snug',   tracking:'normal'  },
-    'heading-5': { size:'2xl',  weight:'medium',    lineHeight:'normal', tracking:'normal'  },
-    'heading-6': { size:'xl',   weight:'medium',    lineHeight:'normal', tracking:'normal'  },
-    'body-lg':   { size:'lg',   weight:'regular',   lineHeight:'relaxed',tracking:'normal'  },
-    'body':      { size:'base', weight:'regular',   lineHeight:'relaxed',tracking:'normal'  },
-    'body-sm':   { size:'sm',   weight:'regular',   lineHeight:'normal', tracking:'normal'  },
-    'caption':   { size:'xs',   weight:'medium',    lineHeight:'normal', tracking:'widest'  },
-    'label':     { size:'sm',   weight:'medium',    lineHeight:'normal', tracking:'widest'  },
-    'code':      { size:'sm',   weight:'regular',   lineHeight:'normal', tracking:'normal'  },
-    'quote':     { size:'2xl',  weight:'light',     lineHeight:'relaxed',tracking:'normal'  },
+    'heading-1': { family:'serif', size:'6xl',  weight:'regular',   lineHeight:'display', tracking:'wide'    },
+    'heading-2': { family:'serif', size:'5xl',  weight:'regular',   lineHeight:'display', tracking:'wide'    },
+    'heading-3': { family:'serif', size:'4xl',  weight:'regular',   lineHeight:'heading', tracking:'wide'    },
+    'heading-4': { family:'serif', size:'3xl',  weight:'medium',    lineHeight:'snug',    tracking:'normal'  },
+    'heading-5': { family:'serif', size:'2xl',  weight:'medium',    lineHeight:'normal',  tracking:'normal'  },
+    'heading-6': { family:'serif', size:'xl',   weight:'medium',    lineHeight:'normal',  tracking:'normal'  },
+    'body-lg':   { size:'lg',   weight:'regular',   lineHeight:'relaxed', tracking:'normal'  },
+    'body':      { size:'base', weight:'regular',   lineHeight:'relaxed', tracking:'normal'  },
+    'body-sm':   { size:'sm',   weight:'regular',   lineHeight:'normal',  tracking:'normal'  },
+    'caption':   { size:'xs',   weight:'medium',    lineHeight:'normal',  tracking:'widest', transform:'uppercase' },
+    'label':     { size:'sm',   weight:'medium',    lineHeight:'normal',  tracking:'widest', transform:'uppercase' },
+    'code':      { size:'sm',   weight:'regular',   lineHeight:'normal',  tracking:'normal', family:'mono' },
+    'quote':     { family:'serif', size:'2xl', weight:'regular', lineHeight:'relaxed', tracking:'normal' },
   },
 
   radius: {
@@ -619,12 +662,12 @@ export const luxe = {
 
   shadow: {
     none:'none',
-    xs:  '0 1px 2px rgba(10,15,26,0.15)',
-    sm:  '0 2px 4px rgba(10,15,26,0.2)',
-    md:  '0 6px 12px rgba(10,15,26,0.25)',
-    lg:  '0 14px 24px rgba(10,15,26,0.3)',
-    xl:  '0 24px 40px rgba(10,15,26,0.35)',
-    '2xl':'0 32px 64px rgba(10,15,26,0.4)',
+    xs:  '0 0 0 1px rgba(223,189,107,0.10), 0 1px 2px rgba(0,0,0,0.3)',
+    sm:  '0 0 0 1px rgba(223,189,107,0.12), 0 2px 6px rgba(0,0,0,0.4)',
+    md:  '0 0 0 1px rgba(223,189,107,0.14), 0 8px 20px rgba(0,0,0,0.5)',
+    lg:  '0 0 0 1px rgba(223,189,107,0.16), 0 16px 40px rgba(0,0,0,0.55)',
+    xl:  '0 0 0 1px rgba(223,189,107,0.18), 0 24px 56px rgba(0,0,0,0.6)',
+    '2xl':'0 0 0 1px rgba(223,189,107,0.20), 0 32px 72px rgba(0,0,0,0.65)',
     inner:'inset 0 1px 2px rgba(10,15,26,0.2)',
   },
 
@@ -644,6 +687,7 @@ export const luxe = {
     error:  { 50:'#fef2f2', 500:'#ef4444', 700:'#b91c1c' },
   },
 
+  // text.inverse is dark navy, which reads well on the gold buttons.
   semantic: {
     background: {
       base:'#0a0f1a', subtle:'#1a202c', muted:'#2a3242',
@@ -652,9 +696,10 @@ export const luxe = {
     surface: { 1:'#1a202c', 2:'#2a3242', 3:'#3d4658' },
     text: {
       primary:'#f8f9fb', secondary:'#c1cad6', muted:'#98a4b5',
-      disabled:'#525d70', inverse:'#0a0f1a', link:'#dfbd6b',
+      disabled:'#707e92', inverse:'#0a0f1a', link:'#dfbd6b',
     },
-    border: { default:'#2a3242', subtle:'#1a202c', strong:'#3d4658', focus:'#cfa344' },
+    // border.subtle differs from background.subtle so subtle borders stay visible.
+    border: { default:'#2a3242', subtle:'#232b3a', strong:'#3d4658', focus:'#cfa344' },
     brand:  { primary:'#cfa344', secondary:'#dfbd6b', accent:'#ecd7a1' },
     state: {
       success:{ bg:'#052e16', text:'#86efac', border:'#166534' },
@@ -672,39 +717,47 @@ export const luxe = {
 
 /* ─────────────────────────────────────────────────────────────
    PRESET 8 — Brutalist
-   Pure black + yellow, monospace, zero radius. Portfolio / studio.
+   Black + white, yellow highlights, mono labels, zero radius.
    ───────────────────────────────────────────────────────────── */
+
+// brand.primary is BLACK (white on yellow was ~1.5:1 and unreadable).
+// Buttons are black with white text and hard offset shadows; yellow lives in
+// secondary / accent / focus.
 
 export const brutalist = {
   name: 'Brutalist',
-  description: 'Black, white, yellow, mono, no radius. Studio / portfolio / creative.',
+  description: 'Black, white, yellow accents, mono labels, no radius. Studio, portfolio, experimental.',
 
   fontFamily: {
-    sans:  'Inter, ui-sans-serif, system-ui, sans-serif',
+    sans:  '"Helvetica Neue", Helvetica, Arial, Inter, ui-sans-serif, system-ui, sans-serif',
     serif: 'ui-serif, Georgia, serif',
-    mono:  '"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace',
+    mono:  '"JetBrains Mono", "Space Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace',
   },
   typeRatio: 1.5,
 
   typeScale: {
     xs:'12px', sm:'14px', base:'16px', lg:'18px', xl:'21px',
-    '2xl':'28px', '3xl':'42px', '4xl':'60px', '5xl':'84px', '6xl':'112px',
+    '2xl':'clamp(1.5rem, 3.5vw, 1.75rem)',
+    '3xl':'clamp(1.9rem, 5vw, 2.625rem)',
+    '4xl':'clamp(2.25rem, 7vw, 3.75rem)',
+    '5xl':'clamp(2.75rem, 10vw, 5.25rem)',
+    '6xl':'clamp(3.25rem, 13vw, 7rem)',
   },
 
   compositeType: {
-    'heading-1': { size:'6xl',  weight:'black',    lineHeight:'none',  tracking:'tighter' },
-    'heading-2': { size:'5xl',  weight:'black',    lineHeight:'tight', tracking:'tighter' },
-    'heading-3': { size:'4xl',  weight:'extrabold',lineHeight:'tight', tracking:'tighter' },
-    'heading-4': { size:'3xl',  weight:'bold',     lineHeight:'tight', tracking:'tight'   },
-    'heading-5': { size:'2xl',  weight:'bold',     lineHeight:'snug',  tracking:'normal'  },
-    'heading-6': { size:'xl',   weight:'bold',     lineHeight:'snug',  tracking:'normal'  },
-    'body-lg':   { size:'lg',   weight:'regular',  lineHeight:'normal',tracking:'normal'  },
-    'body':      { size:'base', weight:'regular',  lineHeight:'normal',tracking:'normal'  },
-    'body-sm':   { size:'sm',   weight:'regular',  lineHeight:'normal',tracking:'normal'  },
-    'caption':   { size:'xs',   weight:'bold',     lineHeight:'normal',tracking:'widest'  },
-    'label':     { size:'sm',   weight:'bold',     lineHeight:'normal',tracking:'wide'    },
-    'code':      { size:'sm',   weight:'regular',  lineHeight:'normal',tracking:'normal'  },
-    'quote':     { size:'2xl',  weight:'bold',     lineHeight:'tight', tracking:'tight'   },
+    'heading-1': { size:'6xl',  weight:'black',     lineHeight:'none',    tracking:'tighter' },
+    'heading-2': { size:'5xl',  weight:'black',     lineHeight:'display', tracking:'tighter' },
+    'heading-3': { size:'4xl',  weight:'extrabold', lineHeight:'display', tracking:'tighter' },
+    'heading-4': { size:'3xl',  weight:'bold',      lineHeight:'tight',   tracking:'tight'   },
+    'heading-5': { size:'2xl',  weight:'bold',      lineHeight:'snug',    tracking:'normal'  },
+    'heading-6': { size:'xl',   weight:'bold',      lineHeight:'snug',    tracking:'normal'  },
+    'body-lg':   { size:'lg',   weight:'regular',   lineHeight:'normal',  tracking:'normal'  },
+    'body':      { size:'base', weight:'regular',   lineHeight:'normal',  tracking:'normal'  },
+    'body-sm':   { size:'sm',   weight:'regular',   lineHeight:'normal',  tracking:'normal'  },
+    'caption':   { family:'mono', size:'xs', weight:'bold', lineHeight:'normal', tracking:'widest', transform:'uppercase' },
+    'label':     { family:'mono', size:'sm', weight:'bold', lineHeight:'normal', tracking:'wide',   transform:'uppercase' },
+    'code':      { size:'sm',   weight:'regular',   lineHeight:'normal',  tracking:'normal', family:'mono' },
+    'quote':     { size:'2xl',  weight:'bold',      lineHeight:'tight',   tracking:'tight'   },
   },
 
   radius: {
@@ -745,11 +798,11 @@ export const brutalist = {
     },
     surface: { 1:'#ffffff', 2:'#f4f4f5', 3:'#e4e4e7' },
     text: {
-      primary:'#000000', secondary:'#3f3f46', muted:'#71717a',
+      primary:'#000000', secondary:'#3f3f46', muted:'#52525b',
       disabled:'#a1a1aa', inverse:'#ffffff', link:'#000000',
     },
     border: { default:'#000000', subtle:'#e4e4e7', strong:'#000000', focus:'#eab308' },
-    brand:  { primary:'#facc15', secondary:'#fde047', accent:'#fef08a' },
+    brand:  { primary:'#000000', secondary:'#facc15', accent:'#fde047' },
     state: {
       success:{ bg:'#f0fdf4', text:'#15803d', border:'#15803d' },
       warning:{ bg:'#fffbeb', text:'#b45309', border:'#b45309' },
@@ -771,38 +824,42 @@ export const brutalist = {
 
 export const nature = {
   name: 'Nature',
-  description: 'Deep green, cream, soft warm. Wellness / sustainable / organic.',
+  description: 'Deep green, cream, soft warm geometry. Wellness, sustainable, organic.',
 
   fontFamily: {
     sans:  'Inter, ui-sans-serif, system-ui, sans-serif',
-    serif: 'Lora, Georgia, "Times New Roman", serif',
+    serif: 'Lora, "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif',
     mono:  'ui-monospace, monospace',
   },
   typeRatio: 1.25,
 
   typeScale: {
     xs:'12px', sm:'14px', base:'16px', lg:'18px', xl:'20px',
-    '2xl':'25px', '3xl':'31px', '4xl':'39px', '5xl':'49px', '6xl':'61px',
+    '2xl':'clamp(1.4rem, 3vw, 1.55rem)',
+    '3xl':'clamp(1.65rem, 3.8vw, 1.95rem)',
+    '4xl':'clamp(1.9rem, 4.8vw, 2.45rem)',
+    '5xl':'clamp(2.25rem, 5.5vw, 3.05rem)',
+    '6xl':'clamp(2.5rem, 6.5vw, 3.8rem)',
   },
 
   compositeType: {
-    'heading-1': { size:'5xl',  weight:'medium',   lineHeight:'tight',  tracking:'tight'   },
-    'heading-2': { size:'4xl',  weight:'medium',   lineHeight:'tight',  tracking:'tight'   },
-    'heading-3': { size:'3xl',  weight:'medium',   lineHeight:'snug',   tracking:'normal'  },
-    'heading-4': { size:'2xl',  weight:'semibold', lineHeight:'snug',   tracking:'normal'  },
-    'heading-5': { size:'xl',   weight:'semibold', lineHeight:'normal', tracking:'normal'  },
-    'heading-6': { size:'lg',   weight:'semibold', lineHeight:'normal', tracking:'normal'  },
-    'body-lg':   { size:'lg',   weight:'regular',  lineHeight:'relaxed',tracking:'normal'  },
-    'body':      { size:'base', weight:'regular',  lineHeight:'relaxed',tracking:'normal'  },
-    'body-sm':   { size:'sm',   weight:'regular',  lineHeight:'normal', tracking:'normal'  },
-    'caption':   { size:'xs',   weight:'medium',   lineHeight:'normal', tracking:'wide'    },
-    'label':     { size:'sm',   weight:'medium',   lineHeight:'normal', tracking:'normal'  },
-    'code':      { size:'sm',   weight:'regular',  lineHeight:'normal', tracking:'normal'  },
-    'quote':     { size:'xl',   weight:'regular',  lineHeight:'relaxed',tracking:'normal'  },
+    'heading-1': { family:'serif', size:'5xl',  weight:'medium',   lineHeight:'display', tracking:'tight'   },
+    'heading-2': { family:'serif', size:'4xl',  weight:'medium',   lineHeight:'heading', tracking:'tight'   },
+    'heading-3': { family:'serif', size:'3xl',  weight:'medium',   lineHeight:'snug',    tracking:'normal'  },
+    'heading-4': { family:'serif', size:'2xl',  weight:'semibold', lineHeight:'snug',    tracking:'normal'  },
+    'heading-5': { family:'serif', size:'xl',   weight:'semibold', lineHeight:'normal',  tracking:'normal'  },
+    'heading-6': { family:'serif', size:'lg',   weight:'semibold', lineHeight:'normal',  tracking:'normal'  },
+    'body-lg':   { size:'lg',   weight:'regular',  lineHeight:'relaxed', tracking:'normal'  },
+    'body':      { size:'base', weight:'regular',  lineHeight:'relaxed', tracking:'normal'  },
+    'body-sm':   { size:'sm',   weight:'regular',  lineHeight:'normal',  tracking:'normal'  },
+    'caption':   { size:'xs',   weight:'medium',   lineHeight:'normal',  tracking:'wider',  transform:'uppercase' },
+    'label':     { size:'sm',   weight:'medium',   lineHeight:'normal',  tracking:'normal'  },
+    'code':      { size:'sm',   weight:'regular',  lineHeight:'normal',  tracking:'normal', family:'mono' },
+    'quote':     { family:'serif', size:'xl', weight:'regular', lineHeight:'relaxed', tracking:'normal' },
   },
 
   radius: {
-    none:'0px', sm:'4px', md:'8px', lg:'14px', xl:'20px', '2xl':'28px', full:'9999px',
+    none:'0px', sm:'4px', md:'8px', lg:'16px', xl:'22px', '2xl':'30px', full:'9999px',
   },
 
   shadow: {
@@ -838,8 +895,9 @@ export const nature = {
       inverse:'#1a2416', elevated:'#ffffff',
     },
     surface: { 1:'#ffffff', 2:'#f7f8f5', 3:'#eef1ea' },
+    // text.muted darkened from #5a6b48 to #4c5b3c for AA contrast on subtle bg.
     text: {
-      primary:'#1a2416', secondary:'#425037', muted:'#5a6b48',
+      primary:'#1a2416', secondary:'#425037', muted:'#4c5b3c',
       disabled:'#9dac89', inverse:'#f7f8f5', link:'#2b6b3d',
     },
     border: { default:'#dde3d4', subtle:'#eef1ea', strong:'#c2cdb3', focus:'#3d8251' },
@@ -857,6 +915,7 @@ export const nature = {
     overlay: { light:'rgba(247,248,245,0.7)', dark:'rgba(26,36,22,0.6)' },
   },
 };
+
 /* ─────────────────────────────────────────────────────────────
    REGISTRY — import this
    ───────────────────────────────────────────────────────────── */

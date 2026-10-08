@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Container, Stack, Grid, Inline, Center } from '../structures';
 import { Heading, Text, Card, Button, Badge } from '../components';
+import Reveal from '../components/Reveal';
 import { resolveStyle, sectionMeta } from './_shared';
 import { color, space, radius, shadow, text } from '../components/tokens';
 
@@ -30,15 +31,17 @@ export default function Pricing({
     <Container>
       <Stack gap={10}>
         {(heading || subheading) && (
-          <Stack gap={3} align="center" style={{ textAlign: 'center', maxWidth: '640px', margin: '0 auto' }}>
-            {eyebrow && (
-              <span style={{ fontSize: '12px', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', color: styleKey === 'brand' ? s.textPrimary : color.brandPrimary }}>
-                {eyebrow}
-              </span>
-            )}
-            {heading && <Heading level={2} color={s.textPrimary}>{heading}</Heading>}
-            {subheading && <Text color={s.textSecondary}>{subheading}</Text>}
-          </Stack>
+          <Reveal>
+            <Stack gap={3} align="center" style={{ textAlign: 'center', maxWidth: '640px', margin: '0 auto' }}>
+              {eyebrow && (
+                <span style={{ fontSize: '12px', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', color: styleKey === 'brand' ? s.textPrimary : color.brandPrimary }}>
+                  {eyebrow}
+                </span>
+              )}
+              {heading && <Heading level={2} color={s.textPrimary}>{heading}</Heading>}
+              {subheading && <Text color={s.textSecondary}>{subheading}</Text>}
+            </Stack>
+          </Reveal>
         )}
 
         {layout === 'tiers-with-toggle' && toggle && (
@@ -64,6 +67,7 @@ export default function Pricing({
                     fontWeight: 500,
                     cursor: 'pointer',
                     textTransform: 'capitalize',
+                    transition: 'background 150ms ease, color 150ms ease',
                   }}
                 >
                   {key}
@@ -73,11 +77,13 @@ export default function Pricing({
           </Center>
         )}
 
-        <Grid columns={{ base: 1, md: 3 }} gap={6}>
-          {tiers.map((tier, i) => (
-            <PricingCard key={i} tier={tier} interval={interval} s={s} featured={tier.featured} />
-          ))}
-        </Grid>
+        <Reveal stagger delay={100}>
+          <Grid columns={{ base: 1, md: 3 }} gap={6}>
+            {tiers.map((tier, i) => (
+              <PricingCard key={i} tier={tier} interval={interval} s={s} featured={tier.featured} />
+            ))}
+          </Grid>
+        </Reveal>
       </Stack>
     </Container>
   );

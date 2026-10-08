@@ -2,6 +2,7 @@
 'use client'
 import { Container, Stack, Inline, Split, Cover, Center } from '../structures';
 import { Button, Heading, Text, Badge, Image } from '../components';
+import HeroAnim from '../components/HeroAnim';
 import { resolveStyle, sectionMeta } from './_shared';
 import { color, space } from '../components/tokens';
 import { useEffect, useState } from 'react';
@@ -25,16 +26,7 @@ export default function Hero({
   style: styleKey = 'default',
   content = {},
 }) {
-
   const s = resolveStyle(styleKey);
-  const {
-    eyebrow,
-    heading,
-    subheading,
-    primaryCta,
-    secondaryCta,
-    image,
-  } = content;
 
   const inner = (() => {
     switch (layout) {
@@ -44,8 +36,8 @@ export default function Hero({
         return <HeroSplit s={s} content={content} reverse={true} />;
       case 'bg-image':
         return <HeroBgImage s={s} content={content} />;
-      case 'bg-slideshow':                                          // ← add this
-        return <HeroSlideshow s={s} content={content} />;            // ← and this
+      case 'bg-slideshow':
+        return <HeroSlideshow s={s} content={content} />;
       case 'centered':
       default:
         return <HeroCentered s={s} content={content} />;
@@ -65,47 +57,44 @@ function HeroCentered({ s, content }) {
   const { eyebrow, heading, subheading, primaryCta, secondaryCta } = content;
   return (
     <Container width="default">
-      <div className="wm-hero-centered">
+      <HeroAnim className="wm-hero-centered">
         <Stack gap={6} align="center" style={{ textAlign: 'center', maxWidth: '720px', margin: '0 auto' }}>
           {eyebrow && (
-            <span style={{
-              display: 'inline-block',
-              padding: '4px 12px',
-              fontSize: '12px',
-              fontWeight: 600,
-              borderRadius: '9999px',
-              background: s.surface,
-              color: s.textPrimary,
-              border: `1px solid ${s.border}`,
-            }}>
+            <span
+              data-hero-part="eyebrow"
+              style={{
+                display: 'inline-block',
+                padding: '4px 12px',
+                fontSize: '12px',
+                fontWeight: 600,
+                borderRadius: '9999px',
+                background: s.surface,
+                color: s.textPrimary,
+                border: `1px solid ${s.border}`,
+              }}
+            >
               {eyebrow}
             </span>
           )}
-          <Heading level={1} color={s.textPrimary}>{heading}</Heading>
-          {subheading && <Text variant="body-lg" color={s.textSecondary}>{subheading}</Text>}
+          <span data-hero-part="heading">
+            <Heading level={1} color={s.textPrimary}>{heading}</Heading>
+          </span>
+          {subheading && (
+            <span data-hero-part="subheading" style={{ display: 'block' }}>
+              <Text variant="body-lg" color={s.textSecondary}>{subheading}</Text>
+            </span>
+          )}
 
-          <div className="wm-hero-cta">
+          <div data-hero-part="cta" className="wm-hero-cta">
             {primaryCta && (
-              <Button
-                label={primaryCta.label}
-                href={primaryCta.href}
-                variant="primary"
-                size="lg"
-                fullWidth
-              />
+              <Button label={primaryCta.label} href={primaryCta.href} variant="primary" size="lg" fullWidth />
             )}
             {secondaryCta && (
-              <Button
-                label={secondaryCta.label}
-                href={secondaryCta.href}
-                variant="ghost"
-                size="lg"
-                fullWidth
-              />
+              <Button label={secondaryCta.label} href={secondaryCta.href} variant="ghost" size="lg" fullWidth />
             )}
           </div>
         </Stack>
-      </div>
+      </HeroAnim>
     </Container>
   );
 }
@@ -114,37 +103,97 @@ function HeroSplit({ s, content, reverse }) {
   const { eyebrow, heading, subheading, primaryCta, secondaryCta, image } = content;
   return (
     <Container>
-      <Split ratio="1fr 1fr" gap={12} reverse={reverse} collapseBelow="md">
-        <Stack gap={5} justify="center">
-          {eyebrow && (
-            <span style={{ fontSize: '12px', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', color: color.brandPrimary }}>
-              {eyebrow}
-            </span>
-          )}
-          <Heading level={1} color={s.textPrimary}>{heading}</Heading>
-          {subheading && <Text variant="body-lg" color={s.textSecondary}>{subheading}</Text>}
-          <Inline gap={3}>
-            {primaryCta && <Button label={primaryCta.label} href={primaryCta.href} variant="primary" size="lg" />}
-            {secondaryCta && <Button label={secondaryCta.label} href={secondaryCta.href} variant="ghost" size="lg" />}
-          </Inline>
-        </Stack>
-        <div>
-          {image ? (
-            <Image src={image} alt="" aspectRatio="4 / 3" rounded />
-          ) : (
-            <div style={{
-              aspectRatio: '4 / 3',
-              background: s.surface,
-              borderRadius: '16px',
-              border: `1px solid ${s.border}`,
-            }} />
-          )}
-        </div>
-      </Split>
+      <div className="wm-hero-split">
+        <Split ratio="1fr 1.15fr" gap={12} reverse={reverse} collapseBelow="md">
+          <HeroAnim>
+            <Stack
+              gap={5}
+              justify="center"
+              style={{
+                maxWidth: '540px',
+                marginLeft: reverse ? 'auto' : 0,
+                marginRight: reverse ? 0 : 'auto',
+              }}
+            >
+              {eyebrow && (
+                <span
+                  data-hero-part="eyebrow"
+                  style={{
+                    fontSize: '12px',
+                    fontWeight: 600,
+                    letterSpacing: '0.05em',
+                    textTransform: 'uppercase',
+                    color: color.brandPrimary,
+                  }}
+                >
+                  {eyebrow}
+                </span>
+              )}
+
+              <span data-hero-part="heading" style={{ display: 'block' }}>
+                <Heading level={1} color={s.textPrimary}>{heading}</Heading>
+              </span>
+
+              {subheading && (
+                <span data-hero-part="subheading" style={{ display: 'block' }}>
+                  <Text variant="body-lg" color={s.textSecondary}>{subheading}</Text>
+                </span>
+              )}
+
+              <div data-hero-part="cta">
+                <Inline gap={3} wrap={false}>
+                  {primaryCta && (
+                    <Button
+                      label={primaryCta.label}
+                      href={primaryCta.href}
+                      variant="primary"
+                      size="lg"
+                    />
+                  )}
+                  {secondaryCta && (
+                    <Button
+                      label={secondaryCta.label}
+                      href={secondaryCta.href}
+                      variant="ghost"
+                      size="lg"
+                    />
+                  )}
+                </Inline>
+              </div>
+            </Stack>
+          </HeroAnim>
+
+          <HeroAnim>
+            <div
+              data-hero-part="image"
+              style={{
+                height: '100%',
+                display: 'flex',
+                alignItems: 'center',
+              }}
+            >
+              {image ? (
+                <div style={{ width: '100%' }}>
+                  <Image src={image} alt="" aspectRatio="4 / 3" rounded />
+                </div>
+              ) : (
+                <div
+                  style={{
+                    width: '100%',
+                    aspectRatio: '4 / 3',
+                    background: s.surface,
+                    borderRadius: '16px',
+                    border: `1px solid ${s.border}`,
+                  }}
+                />
+              )}
+            </div>
+          </HeroAnim>
+        </Split>
+      </div>
     </Container>
   );
 }
-
 function HeroBgImage({ s, content }) {
   const { eyebrow, heading, subheading, primaryCta, secondaryCta, image } = content;
   return (
@@ -157,42 +206,42 @@ function HeroBgImage({ s, content }) {
         backgroundPosition: 'center',
       }}
     >
-      <div style={{
-        position: 'absolute',
-        inset: 0,
-        background: 'rgba(0,0,0,0.5)',
-      }} />
+      <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)' }} />
       <Container style={{ position: 'relative', zIndex: 1 }}>
-        <Stack gap={6} align="center" style={{ textAlign: 'center', maxWidth: '720px', margin: '0 auto' }}>
-          {eyebrow && (
-            <span style={{
-              color: 'rgba(255,255,255,0.9)',
-              fontSize: '12px',
-              fontWeight: 600,
-              letterSpacing: '0.05em',
-              textTransform: 'uppercase',
-            }}>
-              {eyebrow}
+        <HeroAnim>
+          <Stack gap={6} align="center" style={{ textAlign: 'center', maxWidth: '720px', margin: '0 auto' }}>
+            {eyebrow && (
+              <span
+                data-hero-part="eyebrow"
+                style={{
+                  color: 'rgba(255,255,255,0.9)',
+                  fontSize: '12px',
+                  fontWeight: 600,
+                  letterSpacing: '0.05em',
+                  textTransform: 'uppercase',
+                }}
+              >
+                {eyebrow}
+              </span>
+            )}
+            <span data-hero-part="heading">
+              <Heading level={1} color="#fff">{heading}</Heading>
             </span>
-          )}
-          <Heading level={1} color="#fff">{heading}</Heading>
-          {subheading && <Text variant="body-lg" color="rgba(255,255,255,0.85)">{subheading}</Text>}
-
-          <div className="wm-hero-cta">
-            {primaryCta && (
-              <Button label={primaryCta.label} href={primaryCta.href} variant="primary" size="lg" fullWidth />
+            {subheading && (
+              <span data-hero-part="subheading" style={{ display: 'block' }}>
+                <Text variant="body-lg" color="rgba(255,255,255,0.85)">{subheading}</Text>
+              </span>
             )}
-            {secondaryCta && (
-              <Button label={secondaryCta.label} href={secondaryCta.href} variant="secondary" size="lg" fullWidth />
-            )}
-          </div>
-        </Stack>
+            <div data-hero-part="cta" className="wm-hero-cta">
+              {primaryCta && <Button label={primaryCta.label} href={primaryCta.href} variant="primary" size="lg" fullWidth />}
+              {secondaryCta && <Button label={secondaryCta.label} href={secondaryCta.href} variant="secondary" size="lg" fullWidth />}
+            </div>
+          </Stack>
+        </HeroAnim>
       </Container>
     </div>
   );
 }
-
-
 
 function HeroSlideshow({ s, content }) {
   const {
@@ -213,34 +262,37 @@ function HeroSlideshow({ s, content }) {
   const [current, setCurrent] = useState(0);
   const [paused, setPaused] = useState(false);
 
-  // Auto-advance
   useEffect(() => {
     if (images.length <= 1 || paused) return;
-
     const timer = setInterval(() => {
       setCurrent((c) => (c + 1) % images.length);
     }, interval);
-
     return () => clearInterval(timer);
   }, [images.length, interval, paused]);
 
-  // Preload images
   useEffect(() => {
     images.forEach((src) => {
-      const img = new window.Image();   // ← window.Image, not Image
+      const img = new window.Image();
       img.src = src;
     });
   }, [images]);
 
   if (images.length === 0) {
-    // Fall back to a solid background
     return (
       <div className="wm-hero-bg" style={{ background: s.surface }}>
         <Container>
-          <Stack gap={6} align="center" style={{ textAlign: 'center', maxWidth: '720px', margin: '0 auto' }}>
-            <Heading level={1} color={s.textPrimary}>{heading}</Heading>
-            {subheading && <Text variant="body-lg" color={s.textSecondary}>{subheading}</Text>}
-          </Stack>
+          <HeroAnim>
+            <Stack gap={6} align="center" style={{ textAlign: 'center', maxWidth: '720px', margin: '0 auto' }}>
+              <span data-hero-part="heading">
+                <Heading level={1} color={s.textPrimary}>{heading}</Heading>
+              </span>
+              {subheading && (
+                <span data-hero-part="subheading" style={{ display: 'block' }}>
+                  <Text variant="body-lg" color={s.textSecondary}>{subheading}</Text>
+                </span>
+              )}
+            </Stack>
+          </HeroAnim>
         </Container>
       </div>
     );
@@ -249,11 +301,10 @@ function HeroSlideshow({ s, content }) {
   return (
     <div
       className="wm-hero-bg"
-      style={{ position: 'relative', overflow: 'hidden',  minHeight: '100vh' }}
+      style={{ position: 'relative', overflow: 'hidden', minHeight: '100vh' }}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      {/* Layered background images */}
       {images.map((src, i) => (
         <div
           key={i}
@@ -270,7 +321,6 @@ function HeroSlideshow({ s, content }) {
         />
       ))}
 
-      {/* Dark overlay for text contrast */}
       <div
         style={{
           position: 'absolute',
@@ -280,37 +330,39 @@ function HeroSlideshow({ s, content }) {
         }}
       />
 
-      {/* Content */}
       <Container style={{ position: 'relative', zIndex: 2 }}>
-        <Stack gap={6} align="center" style={{ textAlign: 'center', maxWidth: '720px', margin: '0 auto' }}>
-          {eyebrow && (
-            <span style={{
-              color: 'rgba(255,255,255,0.9)',
-              fontSize: '12px',
-              fontWeight: 600,
-              letterSpacing: '0.05em',
-              textTransform: 'uppercase',
-            }}>
-              {eyebrow}
+        <HeroAnim>
+          <Stack gap={6} align="center" style={{ textAlign: 'center', maxWidth: '720px', margin: '0 auto' }}>
+            {eyebrow && (
+              <span
+                data-hero-part="eyebrow"
+                style={{
+                  color: 'rgba(255,255,255,0.9)',
+                  fontSize: '12px',
+                  fontWeight: 600,
+                  letterSpacing: '0.05em',
+                  textTransform: 'uppercase',
+                }}
+              >
+                {eyebrow}
+              </span>
+            )}
+            <span data-hero-part="heading">
+              <Heading level={1} color="#fff">{heading}</Heading>
             </span>
-          )}
-          <Heading level={1} color="#fff">{heading}</Heading>
-          {subheading && (
-            <Text variant="body-lg" color="rgba(255,255,255,0.85)">{subheading}</Text>
-          )}
-
-          <div className="wm-hero-cta">
-            {primaryCta && (
-              <Button label={primaryCta.label} href={primaryCta.href} variant="primary" size="lg" fullWidth />
+            {subheading && (
+              <span data-hero-part="subheading" style={{ display: 'block' }}>
+                <Text variant="body-lg" color="rgba(255,255,255,0.85)">{subheading}</Text>
+              </span>
             )}
-            {secondaryCta && (
-              <Button label={secondaryCta.label} href={secondaryCta.href} variant="secondary" size="lg" fullWidth />
-            )}
-          </div>
-        </Stack>
+            <div data-hero-part="cta" className="wm-hero-cta">
+              {primaryCta && <Button label={primaryCta.label} href={primaryCta.href} variant="primary" size="lg" fullWidth />}
+              {secondaryCta && <Button label={secondaryCta.label} href={secondaryCta.href} variant="secondary" size="lg" fullWidth />}
+            </div>
+          </Stack>
+        </HeroAnim>
       </Container>
 
-      {/* Dot indicators */}
       {images.length > 1 && (
         <div
           style={{

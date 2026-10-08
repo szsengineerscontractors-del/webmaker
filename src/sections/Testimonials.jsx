@@ -1,6 +1,7 @@
 // src/sections/Testimonials.jsx
 import { Container, Stack, Grid, Center } from '../structures';
 import { Heading, Text, Card, Avatar } from '../components';
+import Reveal from '../components/Reveal';
 import { resolveStyle, sectionMeta } from './_shared';
 import { color, space } from '../components/tokens';
 
@@ -33,22 +34,26 @@ export default function Testimonials({
     <Container width="wide">
       <Stack gap={10}>
         {(heading || subheading) && (
-          <Stack gap={3} align="center" style={{ textAlign: 'center', maxWidth: '640px', margin: '0 auto' }}>
-            {eyebrow && (
-              <span style={{ fontSize: '12px', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', color: styleKey === 'brand' ? s.textPrimary : color.brandPrimary }}>
-                {eyebrow}
-              </span>
-            )}
-            {heading && <Heading level={2} color={s.textPrimary}>{heading}</Heading>}
-            {subheading && <Text color={s.textSecondary}>{subheading}</Text>}
-          </Stack>
+          <Reveal>
+            <Stack gap={3} align="center" style={{ textAlign: 'center', maxWidth: '640px', margin: '0 auto' }}>
+              {eyebrow && (
+                <span style={{ fontSize: '12px', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', color: styleKey === 'brand' ? s.textPrimary : color.brandPrimary }}>
+                  {eyebrow}
+                </span>
+              )}
+              {heading && <Heading level={2} color={s.textPrimary}>{heading}</Heading>}
+              {subheading && <Text color={s.textSecondary}>{subheading}</Text>}
+            </Stack>
+          </Reveal>
         )}
 
-        <Grid columns={cols} gap={6}>
-          {items.map((item, i) => (
-            <TestimonialCard key={i} item={item} s={s} compact={layout === 'wall'} />
-          ))}
-        </Grid>
+        <Reveal stagger delay={100}>
+          <Grid columns={cols} gap={6}>
+            {items.map((item, i) => (
+              <TestimonialCard key={i} item={item} s={s} compact={layout === 'wall'} />
+            ))}
+          </Grid>
+        </Reveal>
       </Stack>
     </Container>
   );

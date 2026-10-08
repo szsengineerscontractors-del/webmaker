@@ -1,6 +1,15 @@
 // presetData.js
 // Website Maker — Structural token constants + CSS variable generator.
 // Aesthetic values (colors, fonts, radius, shadows) live in presets.js.
+//
+// CHANGES vs previous version (all additive / backward compatible):
+//  - cssVars: tracking now falls back to the raw bundle value if the name
+//    is not found in TRACKING (was: silently became '0em').
+//  - cssVars: font family emits a valid var() only when the family key is
+//    known; unknown keys fall back to 'sans'.
+//  - cssVars: typeScale emits a fallback --text-* for any missing name so
+//    consumers of var(--text-*) never silently break.
+//  - All structural constants unchanged.
 
 /* ─────────────────────────────────────────────────────────────
    1. STRUCTURAL CONSTANTS — never change, lock forever
@@ -21,6 +30,17 @@ export const spacing = {
   20: '80px',
   24: '96px',
   32: '128px',
+  40: '160px',
+  48: '192px',
+};
+
+// Fluid vertical rhythm for sections. Scales with viewport so mobile
+// stays compact and desktop gets generous whitespace.
+export const sectionSpacing = {
+  sm: 'clamp(2.5rem, 6vw, 4rem)',
+  md: 'clamp(3.5rem, 9vw, 6rem)',
+  lg: 'clamp(4.5rem, 12vw, 8rem)',
+  xl: 'clamp(5.5rem, 15vw, 10rem)',
 };
 
 export const zIndex = {
@@ -133,12 +153,16 @@ export const typeScaleNames = [
   '2xl', '3xl', '4xl', '5xl', '6xl',
 ];
 
+// `display` is for 60px+ headings (hero). `heading` for mid-size headings.
+// Existing names are kept so old templates keep working.
 export const lineHeightNames = {
   none: 1,
-  tight: 1.25,
+  display: 1.05,
+  heading: 1.12,
+  tight: 1.2,
   snug: 1.375,
   normal: 1.5,
-  relaxed: 1.75,
+  relaxed: 1.7,
   loose: 2,
 };
 
@@ -207,6 +231,31 @@ export const spacingValue = (key) => spacing[key] ?? '0px';
    4. cssVars — flatten a theme OBJECT into CSS custom properties
    ───────────────────────────────────────────────────────────── */
 
+const TRACKING = {
+  tighter: '-0.04em',
+  tight: '-0.025em',
+  normal: '0em',
+  wide: '0.025em',
+  wider: '0.05em',
+  widest: '0.1em',
+};
+
+// Fallback sizes for --text-* so that direct consumers of var(--text-*)
+// never silently lose a value if a preset forgets a scale key.
+// Kept in sync with the smallest sensible scale; presets override.
+const TYPE_SCALE_FALLBACK = {
+  xs:   '12px',
+  sm:   '14px',
+  base: '16px',
+  lg:   '18px',
+  xl:   '20px',
+  '2xl':'24px',
+  '3xl':'30px',
+  '4xl':'36px',
+  '5xl':'48px',
+  '6xl':'60px',
+};
+
 /**
  * Flatten a theme object into CSS custom properties.
  *
@@ -224,6 +273,9 @@ export const cssVars = (theme) => {
   /* ── Structural constants ── */
   for (const [k, v] of Object.entries(spacing))
     vars[`--space-${k}`] = v;
+
+  for (const [k, v] of Object.entries(sectionSpacing))
+    vars[`--space-section-${k}`] = v;
 
   for (const [k, v] of Object.entries(zIndex))
     vars[`--z-${k}`] = String(v);
@@ -258,27 +310,38 @@ export const cssVars = (theme) => {
   for (const [k, v] of Object.entries(fontWeightExtended))
     vars[`--font-weight-${k}`] = String(v);
 
-  /* ── Type scale (from theme) ── */
-  for (const [k, v] of Object.entries(theme.typeScale ?? {}))
-    vars[`--text-${k}`] = v;
+  /* ── Type scale (from theme) ──
+     Emit every canonical name. Use the theme's value when present,
+     otherwise fall back to a sensible default so var(--text-*) never
+     resolves to nothing. */
+  for (const name of typeScaleNames) {
+    const value = theme.typeScale?.[name] ?? TYPE_SCALE_FALLBACK[name];
+    if (value != null) vars[`--text-${name}`] = value;
+  }
 
   /* ── Composite type tokens (from theme) ── */
+  const familyKeys = theme.fontFamily ?? {};
   for (const [name, bundle] of Object.entries(theme.compositeType ?? {})) {
     const size     = theme.typeScale?.[bundle.size] ?? bundle.size;
     const weight   = fontWeightExtended?.[bundle.weight] ?? bundle.weight;
     const lh       = lineHeightNames?.[bundle.lineHeight] ?? bundle.lineHeight;
-    const tracking =
-      bundle.tracking === 'tighter' ? '-0.04em' :
-      bundle.tracking === 'tight'   ? '-0.025em' :
-      bundle.tracking === 'wide'    ? '0.025em' :
-      bundle.tracking === 'wider'   ? '0.05em' :
-      bundle.tracking === 'widest'  ? '0.1em' :
-      '0em';
+    // Fall back to the raw tracking value when it isn't a known name,
+    // so presets can pass a raw CSS length if needed without losing it.
+    const tracking = TRACKING[bundle.tracking] ?? bundle.tracking ?? '0em';
 
     vars[`--type-${name}-size`]        = size;
     vars[`--type-${name}-weight`]      = String(weight);
     vars[`--type-${name}-line-height`] = String(lh);
     vars[`--type-${name}-tracking`]    = tracking;
+
+    // Font family + text-transform per composite token.
+    // `family` is 'sans' | 'serif' | 'mono' and must exist in the theme's
+    // fontFamily map. Unknown keys fall back to 'sans' so the var always
+    // resolves to a real font stack.
+    const familyKey =
+      bundle.family && familyKeys[bundle.family] ? bundle.family : 'sans';
+    vars[`--type-${name}-family`]    = `var(--font-${familyKey})`;
+    vars[`--type-${name}-transform`] = bundle.transform ?? 'none';
   }
 
   /* ── Radius (from theme) ── */
@@ -318,6 +381,7 @@ export const cssVars = (theme) => {
 export default {
   // Structural
   spacing,
+  sectionSpacing,
   zIndex,
   breakpoints,
   opacity,

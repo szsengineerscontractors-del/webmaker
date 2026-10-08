@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Container, Stack, Grid, Split, Inline } from '../structures';
 import { Heading, Text, Button, Input } from '../components';
+import Reveal from '../components/Reveal';
 import { resolveStyle, sectionMeta } from './_shared';
 import { color, space } from '../components/tokens';
 
@@ -13,7 +14,7 @@ export const meta = sectionMeta({
   defaultLayout: 'split',
   layouts: [
     { id: 'split',     label: 'Split',      description: 'Info on left, form on right' },
-    { id: 'centered',  label: 'Centered',   description: 'Everything centered, form below' },
+    { id: 'centered',  label: 'Centered',   description: 'Header, info row, then form' },
     { id: 'info-only', label: 'Info only',  description: 'Address and hours, no form' },
   ],
 });
@@ -22,7 +23,7 @@ export default function Contact({
   layout = 'split',
   style: styleKey = 'default',
   content = {},
-  siteId,               // ← NEW: passed by renderer
+  siteId,
 }) {
   const s = resolveStyle(styleKey);
   const { eyebrow, heading, subheading, form = {}, info = [], map } = content;
@@ -49,42 +50,70 @@ export default function Contact({
     <Container>
       {layout === 'split' && (
         <Split ratio="1fr 1fr" gap={12} collapseBelow="md">
-          <Stack gap={6}>
-            {header}
-            <ContactInfo items={info} s={s} />
-          </Stack>
+          <Reveal>
+            <Stack gap={6}>
+              {header}
+              <ContactInfo items={info} s={s} />
+            </Stack>
+          </Reveal>
+          {/* Form is NOT wrapped in Reveal — it's interactive. */}
           <ContactForm form={form} s={s} siteId={siteId} />
         </Split>
       )}
 
       {layout === 'centered' && (
-        <Stack gap={8} align="center" style={{ textAlign: 'center' }}>
-          <Stack gap={3} align="center" style={{ maxWidth: '640px' }}>
-            {header}
-          </Stack>
-          <div style={{ width: '100%', maxWidth: '560px' }}>
+        <Stack gap={10} align="center" style={{ textAlign: 'center' }}>
+          <Reveal>
+            <Stack gap={3} align="center" style={{ maxWidth: '640px' }}>
+              {eyebrow && (
+                <span style={{
+                  fontSize: '12px',
+                  fontWeight: 600,
+                  letterSpacing: '0.05em',
+                  textTransform: 'uppercase',
+                  color: styleKey === 'brand' ? s.textPrimary : color.brandPrimary,
+                }}>
+                  {eyebrow}
+                </span>
+              )}
+              {heading && <Heading level={2} color={s.textPrimary}>{heading}</Heading>}
+              {subheading && <Text color={s.textSecondary}>{subheading}</Text>}
+            </Stack>
+          </Reveal>
+
+          {info.length > 0 && (
+            <Reveal delay={100} style={{ width: '100%', maxWidth: '840px', margin: '0 auto' }}>
+              <ContactInfoRow items={info} s={s} />
+            </Reveal>
+          )}
+
+          {/* Form is NOT wrapped in Reveal — it's interactive. */}
+          <div style={{ width: '100%', maxWidth: '640px', margin: '0 auto' }}>
             <ContactForm form={form} s={s} siteId={siteId} />
           </div>
-          <ContactInfo items={info} s={s} centered />
         </Stack>
       )}
 
       {layout === 'info-only' && (
         <Stack gap={10}>
-          {header}
-          <ContactInfo items={info} s={s} />
+          <Reveal>{header}</Reveal>
+          <Reveal stagger delay={100}>
+            <ContactInfo items={info} s={s} />
+          </Reveal>
           {map && (
-            <div style={{
-              aspectRatio: '21 / 9',
-              background: s.surface,
-              border: `1px solid ${s.border}`,
-              borderRadius: 'var(--radius-lg)',
-              overflow: 'hidden',
-            }}>
-              {typeof map === 'string' ? (
-                <iframe src={map} title="Map" style={{ width: '100%', height: '100%', border: 0 }} loading="lazy" />
-              ) : null}
-            </div>
+            <Reveal delay={200}>
+              <div style={{
+                aspectRatio: '21 / 9',
+                background: s.surface,
+                border: `1px solid ${s.border}`,
+                borderRadius: 'var(--radius-lg)',
+                overflow: 'hidden',
+              }}>
+                {typeof map === 'string' ? (
+                  <iframe src={map} title="Map" style={{ width: '100%', height: '100%', border: 0 }} loading="lazy" />
+                ) : null}
+              </div>
+            </Reveal>
           )}
         </Stack>
       )}
@@ -92,6 +121,10 @@ export default function Contact({
   );
 }
 
+/* ─── INFO ─── */
+
+// Vertical stack — used by `split` and `info-only`.
+// Left-aligned by default, or centered when `centered` is true.
 function ContactInfo({ items, s, centered = false }) {
   if (!items || items.length === 0) return null;
   return (
@@ -115,6 +148,60 @@ function ContactInfo({ items, s, centered = false }) {
     </Stack>
   );
 }
+
+// Horizontal row — used by `centered`.
+// Lays items side by side, centered, with generous gaps.
+// Wraps naturally on narrow screens.
+function ContactInfoRow({ items, s }) {
+  if (!items || items.length === 0) return null;
+
+  return (
+    <div
+      style={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        justifyContent: 'center',
+        alignItems: 'flex-start',
+        gap: space(10),
+        width: '100%',
+      }}
+    >
+      {items.map((item, i) => (
+        <div
+          key={i}
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: space(1),
+            minWidth: '140px',
+            maxWidth: '240px',
+          }}
+        >
+          <span style={{
+            fontSize: 'var(--text-xs)',
+            fontWeight: 600,
+            letterSpacing: '0.05em',
+            textTransform: 'uppercase',
+            color: s.textMuted,
+          }}>
+            {item.label}
+          </span>
+          <span style={{
+            fontSize: 'var(--text-base)',
+            fontWeight: 500,
+            color: s.textPrimary,
+            lineHeight: 1.4,
+          }}>
+            {item.value}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* ─── FORM ─── */
 
 function ContactForm({ form, s, siteId }) {
   const [fields, setFields] = useState({
@@ -196,6 +283,7 @@ function ContactForm({ form, s, siteId }) {
         background: s.surface,
         border: `1px solid ${s.border}`,
         borderRadius: 'var(--radius-lg)',
+        textAlign: 'left',
       }}
     >
       <Input
