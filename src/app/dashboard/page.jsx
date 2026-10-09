@@ -6,6 +6,7 @@ import Site from '@/models/Site';
 import Lead from '@/models/Lead';
 import Link from 'next/link';
 import DeleteButton from './DeleteButton';
+import ListedToggle from './ListedToggle';
 import './dashboard.css';
 
 export default async function Dashboard() {
@@ -37,8 +38,8 @@ export default async function Dashboard() {
     process.env.NEXT_PUBLIC_ROOT_DOMAIN ||
     (isLocal ? 'localhost:3000' : 'webmaker-gold.vercel.app');
 
-  const baseHost = ROOT_DOMAIN;                            // includes port if any
-  const baseDisplay = ROOT_DOMAIN.replace(/:\d+$/, '');    // strip port for display
+  const baseHost = ROOT_DOMAIN;
+  const baseDisplay = ROOT_DOMAIN.replace(/:\d+$/, '');
   const scheme = isLocal ? 'http' : 'https';
 
   return (
@@ -53,10 +54,15 @@ export default async function Dashboard() {
                 : `${sites.length} site${sites.length === 1 ? '' : 's'}`}
             </p>
           </div>
-          <Link href="/build" className="dash-btn dash-btn-primary">
-            <span style={{ fontSize: 18, lineHeight: 1 }}>+</span>
-            New site
-          </Link>
+          <div className="dash-header-actions">
+            <Link href="/sites" className="dash-btn">
+              Browse gallery
+            </Link>
+            <Link href="/build" className="dash-btn dash-btn-primary">
+              <span style={{ fontSize: 18, lineHeight: 1 }}>+</span>
+              New site
+            </Link>
+          </div>
         </div>
 
         {sites.length === 0 ? (
@@ -93,7 +99,6 @@ export default async function Dashboard() {
 
                     {subdomainUrl ? (
                       <a
-                        // href={subdomainUrl}
                         href={`/site/${site._id}`}
                         target="_blank"
                         rel="noopener noreferrer"
@@ -130,16 +135,22 @@ export default async function Dashboard() {
                       />
                     </div>
 
-                    <Link
-                      href={`/dashboard/sites/${site._id}/leads`}
-                      className="dash-card-leads"
-                    >
-                      <span>View leads</span>
-                      {unread > 0 && (
-                        <span className="dash-card-leads-count">{unread}</span>
-                      )}
-                      <span className="dash-card-leads-arrow">→</span>
-                    </Link>
+                    <div className="dash-card-footer">
+                      <ListedToggle
+                        siteId={site._id.toString()}
+                        initialListed={site.listed !== false}
+                      />
+                      <Link
+                        href={`/dashboard/sites/${site._id}/leads`}
+                        className="dash-card-leads"
+                      >
+                        <span>View leads</span>
+                        {unread > 0 && (
+                          <span className="dash-card-leads-count">{unread}</span>
+                        )}
+                        <span className="dash-card-leads-arrow">→</span>
+                      </Link>
+                    </div>
                   </div>
                 </div>
               );
